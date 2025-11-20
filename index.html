@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CvSU Org Hub</title>
+<style>
+body{font-family:'Segoe UI',sans-serif;margin:0;padding:0;background:#f5f6fa;color:#333;}
+h1,h2{margin:0 0 10px;}
+button,input,select,textarea{font-family:inherit;font-size:14px;}
+.container{max-width:1200px;margin:0 auto;padding:20px;}
+.hidden{display:none;}
+hr{border:0;border-top:1px solid #eee;margin:20px 0;}
+#auth-section{background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);max-width:450px;margin:50px auto;}
+#auth-section input,#auth-section select,#auth-section button,#auth-section textarea{margin-bottom:15px;padding:10px;border-radius:8px;border:1px solid #ccc;width:100%;box-sizing:border-box;}
+#auth-section button{background:#4a90e2;color:#fff;border:none;cursor:pointer;transition:0.2s;}
+#auth-section button:hover{background:#357ABD;}
+#dashboard{display:none;}
+nav{display:flex;flex-wrap:wrap;margin-bottom:20px;}
+nav button{background:#fff;border:1px solid #ddd;padding:10px 20px;margin-right:10px;border-radius:8px;cursor:pointer;transition:0.2s;}
+nav button.active{background:#4a90e2;color:#fff;border-color:#4a90e2;}
+nav button:hover{background:#357ABD;color:#fff;border-color:#357ABD;}
+section.tab-section{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);margin-bottom:20px;}
+section.tab-section input, section.tab-section select, section.tab-section textarea, section.tab-section button{margin-bottom:10px;padding:10px;border-radius:8px;border:1px solid #ccc;width:100%;box-sizing:border-box;}
+section.tab-section button{background:#4a90e2;color:#fff;border:none;cursor:pointer;transition:0.2s;}
+section.tab-section button:hover{background:#357ABD;}
+.card{background:#f9f9f9;padding:15px;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+.card img{max-width:100%;border-radius:8px;margin-bottom:10px;}
+.table-responsive{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+table th,table td{padding:10px;text-align:left;border-bottom:1px solid #eee;}
+table th{background:#f2f2f2;}
+@media(max-width:768px){nav{flex-direction:column;} nav button{margin-bottom:10px;}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>CvSU Organization Hub</h1>
+
+<!-- Auth Section -->
+<section id="auth-section">
+<h2>Login / Signup</h2>
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+<input type="text" id="name" placeholder="Full Name (Signup)">
+<select id="grade">
+<option value="">Select Grade</option>
+<option value="7">Grade 7</option>
+<option value="8">Grade 8</option>
+<option value="9">Grade 9</option>
+<option value="10">Grade 10</option>
+<option value="11">Grade 11</option>
+<option value="12">Grade 12</option>
+</select>
+<input type="text" id="section" placeholder="Section (e.g., 9-A)">
+<select id="position">
+<option value="">Select Position</option>
+<option value="Member">Member</option>
+<option value="Secretary">Secretary</option>
+<option value="Treasurer">Treasurer</option>
+<option value="VP">VP</option>
+<option value="President">President</option>
+<option value="Auditor">Auditor</option>
+</select>
+<button id="signupBtn">Signup (Email)</button>
+<button id="loginBtn">Login (Email)</button>
+<button id="googleLoginBtn">Login with Google</button>
+</section>
+
+<!-- Dashboard -->
+<section id="dashboard">
+<nav>
+<button data-tab="announcements" class="active">Announcements</button>
+<button data-tab="receipts">Receipts & Budget</button>
+<button data-tab="attendance">Attendance</button>
+<button data-tab="inventory">Inventory</button>
+<button data-tab="forms">Forms</button>
+<button data-tab="masterlist">Masterlist</button>
+<button id="logoutBtn">Logout</button>
+</nav>
+
+<!-- Announcements -->
+<section id="announcements-tab" class="tab-section active">
+<h2>Announcements</h2>
+<input type="text" id="announcement-title" placeholder="Title">
+<textarea id="announcement-msg" placeholder="Message"></textarea>
+<button id="post-announcement-btn">Post Announcement</button>
+<div id="announcement-list"></div>
+</section>
+
+<!-- Receipts -->
+<section id="receipts-tab" class="tab-section">
+<h2>Receipts</h2>
+<input type="file" id="receipt-file">
+<input type="number" id="receipt-amount" placeholder="Amount (₱)">
+<textarea id="receipt-desc" placeholder="Description"></textarea>
+<button id="upload-receipt-btn">Upload Receipt</button>
+<div id="receipt-list"></div>
+</section>
+
+<!-- Attendance -->
+<section id="attendance-tab" class="tab-section">
+<h2>Attendance</h2>
+<input type="text" id="attendance-event" placeholder="Event Name">
+<button id="mark-attendance-btn">Mark Attendance</button>
+<div id="attendance-list"></div>
+</section>
+
+<!-- Inventory -->
+<section id="inventory-tab" class="tab-section">
+<h2>Inventory</h2>
+<input type="text" id="inventory-name" placeholder="Item Name">
+<input type="number" id="inventory-qty" placeholder="Quantity">
+<input type="text" id="inventory-location" placeholder="Location">
+<input type="file" id="inventory-image">
+<button id="add-inventory-btn">Add Item</button>
+<div id="inventory-list"></div>
+</section>
+
+<!-- Forms -->
+<section id="forms-tab" class="tab-section">
+<h2>Forms</h2>
+<input type="file" id="form-file">
+<input type="text" id="form-name" placeholder="Form Name">
+<button id="upload-form-btn">Upload Form</button>
+<div id="forms-list"></div>
+</section>
+
+<!-- Masterlist -->
+<section id="masterlist-tab" class="tab-section">
+<h2>Masterlist</h2>
+<div id="masterlist-table" class="table-responsive"></div>
+</section>
+
+</div>
+
+<script type="module">
+// --- Firebase & Supabase Setup ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+import { getDatabase, ref, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+// --- Firebase Config ---
+const firebaseConfig = { /* your firebase config */ };
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth();
+const provider = new GoogleAuthProvider();
+
+// --- Supabase ---
+const supabase = createClient("https://kidiqmlzfsdesqbdvnmk.supabase.co","YOUR_SUPABASE_KEY_HERE");
+
+// --- Persistent Login ---
+function saveUserLocally(u){localStorage.setItem('orgHubUser',JSON.stringify(u));}
+function getSavedUser(){return localStorage.getItem('orgHubUser')?JSON.parse(localStorage.getItem('orgHubUser')):null;}
+
+// --- Permissions ---
+const perms = {President:["all"],VP:["announcements","attendance","inventory","budget","forms"],Secretary:["announcements","forms"],Treasurer:["budget","receipts"],Auditor:["budget-view"],Member:["view-only"]};
+function checkPermission(role,action){return perms[role].includes(action)||perms[role].includes("all");}
+
+// --- Auth ---
+async function signupEmail(){
+const email=document.getElementById('email').value;
+const password=document.getElementById('password').value;
+const name=document.getElementById('name').value;
+const grade=document.getElementById('grade').value;
+const section=document.getElementById('section').value;
+const position=document.getElementById('position').value;
+const u = await createUserWithEmailAndPassword(auth,email,password);
+const profile={uid:u.user.uid,email,name,grade,section,position,createdAt:Date.now()};
+await set(ref(db,'users/'+u.user.uid),profile);
+saveUserLocally(profile); showDashboard(profile);}
+
+async function loginEmail(){
+const email=document.getElementById('email').value;
+const password=document.getElementById('password').value;
+const u = await signInWithEmailAndPassword(auth,email,password);
+const snap=await get(ref(db,'users/'+u.user.uid));
+saveUserLocally(snap.val()); showDashboard(snap.val());
+}
+
+async function loginGoogle(){
+const res=await signInWithPopup(auth,provider);
+const u=res.user;
+const grade=document.getElementById('grade').value;
+const section=document.getElementById('section').value;
+const position=document.getElementById('position').value;
+const profile={uid:u.uid,email:u.email,name:u.displayName,grade,section,position,createdAt:Date.now()};
+await set(ref(db,'users/'+u.uid),profile);
+saveUserLocally(profile); showDashboard(profile);
+}
+
+async function logout(){await signOut(auth);localStorage.removeItem('orgHubUser');showLoginPage();}
+
+// --- Tabs ---
+document.querySelectorAll('nav button[data-tab]').forEach(b=>b.addEventListener('click',()=>{showTab(b.dataset.tab);}));
+function showTab(tab){document.querySelectorAll('#dashboard section.tab-section').forEach(s=>s.classList.remove('active'));document.getElementById(tab+'-tab').classList.add('active');}
+
+// --- Show / Hide ---
+function showLoginPage(){document.getElementById('auth-section').style.display='block';document.getElementById('dashboard').style.display='none';}
+function showDashboard(user){document.getElementById('auth-section').style.display='none';document.getElementById('dashboard').style.display='block';showTab('announcements');initDashboard(user);}
+
+// --- Dashboard Logic ---
+function initDashboard(user){
+const uid=user.uid;
+
+// Announcements
+document.getElementById('post-announcement-btn').onclick=async()=>{
+if(!checkPermission(user.position,'announcements')) return alert("No permission");
+const title=document.getElementById('announcement-title').value;
+const msg=document.getElementById('announcement-msg').value;
+await push(ref(db,'announcements'),{title,msg,date:Date.now(),grades:[user.grade],sections:[user.section]});
+};
+onValue(ref(db,'announcements'),snap=>{
+const data=snap.val()||{}; const list=document.getElementById('announcement-list'); list.innerHTML='';
+for(const id in data){const a=data[id];if(a.grades.includes(user.grade)&&a.sections.includes(user.section)){
+const div=document.createElement('div');div.className='card';div.innerHTML=`<b>${a.title}</b><p>${a.msg}</p>`;list.appendChild(div);}}});
+
+// Receipts
+document.getElementById('upload-receipt-btn').onclick=async()=>{
+if(!checkPermission(user.position,'receipts')) return alert("No permission");
+const file=document.getElementById('receipt-file').files[0];if(!file) return alert("Select file");
+const amount=document.getElementById('receipt-amount').value; const desc=document.getElementById('receipt-desc').value;
+const {data,error}=await supabase.storage.from('org-resources-files').upload('receipts/'+Date.now()+'-'+file.name,file);
+const publicUrl = supabase.storage.from('org-resources-files').getPublicUrl('receipts/'+Date.now()+'-'+file.name).data.publicUrl;
+await push(ref(db,'receipts'),{url:publicUrl,amount,desc,uid,user,date:Date.now(),grade:user.grade,section:user.section});
+};
+onValue(ref(db,'receipts'),snap=>{
+const data=snap.val()||{}; const list=document.getElementById('receipt-list'); list.innerHTML='';
+for(const id in data){ const r=data[id]; if(r.grade===user.grade&&r.section===user.section){
+const div=document.createElement('div');div.className='card';div.innerHTML=`<b>₱${r.amount}</b><p>${r.desc}</p><a href="${r.url}" target="_blank">View File</a>`;list.appendChild(div);}}});
+
+// Attendance
+document.getElementById('mark-attendance-btn').onclick=async()=>{
+const eventName=document.getElementById('attendance-event').value;
+if(!eventName) return alert("Enter event name");
+const snap = await get(ref(db,'users'));
+const users=snap.val()||{};
+for(const k in users){const u2=users[k]; if(u2.grade===user.grade && u2.section===user.section){
+await set(ref(db,`attendance/${eventName}/${u2.uid}`),'present');}}
+};
+onValue(ref(db,'attendance'),snap=>{
+const data=snap.val()||{}; const list=document.getElementById('attendance-list'); list.innerHTML='';
+for(const event in data){ const div=document.createElement('div'); div.className='card'; div.innerHTML=`<b>${event}</b><p>Attendees: ${Object.keys(data[event]).length}</p>`; list.appendChild(div);}});
+
+// Inventory
+document.getElementById('add-inventory-btn').onclick=async()=>{
+if(!checkPermission(user.position,'inventory')) return alert("No permission");
+const name=document.getElementById('inventory-name').value;
+const qty=document.getElementById('inventory-qty').value;
+const loc=document.getElementById('inventory-location').value;
+const file=document.getElementById('inventory-image').files[0];if(!file) return alert("Select file");
+const {data,error}=await supabase.storage.from('org-resources-files').upload('inventory/'+Date.now()+'-'+file.name,file);
+const url=supabase.storage.from('org-resources-files').getPublicUrl('inventory/'+Date.now()+'-'+file.name).data.publicUrl;
+await push(ref(db,'inventory'),{name,qty,loc,url,grade:user.grade,section:user.section});
+};
+onValue(ref(db,'inventory'),snap=>{
+const data=snap.val()||{}; const list=document.getElementById('inventory-list'); list.innerHTML='';
+for(const id in data){ const i=data[id]; if(i.grade===user.grade&&i.section===user.section){
+const div=document.createElement('div');div.className='card';div.innerHTML=`<b>${i.name}</b><p>Qty: ${i.qty} | Location: ${i.loc}</p><img src="${i.url}">`;list.appendChild(div);}}});
+
+// Forms
+document.getElementById('upload-form-btn').onclick=async()=>{
+if(!checkPermission(user.position,'forms')) return alert("No permission");
+const name=document.getElementById('form-name').value;
+const file=document.getElementById('form-file').files[0];if(!file) return alert("Select file");
+const {data,error}=await supabase.storage.from('org-resources-files').upload('forms/'+Date.now()+'-'+file.name,file);
+const url=supabase.storage.from('org-resources-files').getPublicUrl('forms/'+Date.now()+'-'+file.name).data.publicUrl;
+await push(ref(db,'forms'),{name,url,grade:user.grade,section:user.section});
+};
+onValue(ref(db,'forms'),snap=>{
+const data=snap.val()||{}; const list=document.getElementById('forms-list'); list.innerHTML='';
+for(const id in data){ const f=data[id]; if(f.grade===user.grade&&f.section===user.section){
+const div=document.createElement('div');div.className='card';div.innerHTML=`<b>${f.name}</b><a href="${f.url}" target="_blank">Download</a>`;list.appendChild(div);}}});
+
+// Masterlist
+onValue(ref(db,'users'),snap=>{
+const data=snap.val()||{}; const table=document.getElementById('masterlist-table'); table.innerHTML='<table><tr><th>Name</th><th>Email</th><th>Grade</th><th>Section</th><th>Position</th></tr>';
+for(const id in data){ const u2=data[id]; if(u2.grade===user.grade&&u2.section===user.section){
+table.innerHTML+=`<tr><td>${u2.name}</td><td>${u2.email}</td><td>${u2.grade}</td><td>${u2.section}</td><td>${u2.position}</td></tr>`;}}table.innerHTML+='</table>';
+});
+
+document.getElementById('logoutBtn').onclick=logout;
+}
+
+// --- On Load ---
+window.addEventListener('DOMContentLoaded',()=>{const u=getSavedUser(); u?showDashboard(u):showLoginPage();});
+document.getElementById('signupBtn').onclick=signupEmail;
+document.getElementById('loginBtn').onclick=loginEmail;
+document.getElementById('googleLoginBtn').onclick=loginGoogle;
+
+</script>
+</body>
+</html>
