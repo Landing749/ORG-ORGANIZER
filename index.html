@@ -1,294 +1,930 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CvSU Org Hub</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CvSU Org Hub — Batch Officers</title>
+
+<!-- Styles: Green + White, toggleable Dark Mode -->
 <style>
-body{font-family:'Segoe UI',sans-serif;margin:0;padding:0;background:#f5f6fa;color:#333;}
-h1,h2{margin:0 0 10px;}
-button,input,select,textarea{font-family:inherit;font-size:14px;}
-.container{max-width:1200px;margin:0 auto;padding:20px;}
-.hidden{display:none;}
-hr{border:0;border-top:1px solid #eee;margin:20px 0;}
-#auth-section{background:#fff;padding:30px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);max-width:450px;margin:50px auto;}
-#auth-section input,#auth-section select,#auth-section button,#auth-section textarea{margin-bottom:15px;padding:10px;border-radius:8px;border:1px solid #ccc;width:100%;box-sizing:border-box;}
-#auth-section button{background:#4a90e2;color:#fff;border:none;cursor:pointer;transition:0.2s;}
-#auth-section button:hover{background:#357ABD;}
-#dashboard{display:none;}
-nav{display:flex;flex-wrap:wrap;margin-bottom:20px;}
-nav button{background:#fff;border:1px solid #ddd;padding:10px 20px;margin-right:10px;border-radius:8px;cursor:pointer;transition:0.2s;}
-nav button.active{background:#4a90e2;color:#fff;border-color:#4a90e2;}
-nav button:hover{background:#357ABD;color:#fff;border-color:#357ABD;}
-section.tab-section{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.05);margin-bottom:20px;}
-section.tab-section input, section.tab-section select, section.tab-section textarea, section.tab-section button{margin-bottom:10px;padding:10px;border-radius:8px;border:1px solid #ccc;width:100%;box-sizing:border-box;}
-section.tab-section button{background:#4a90e2;color:#fff;border:none;cursor:pointer;transition:0.2s;}
-section.tab-section button:hover{background:#357ABD;}
-.card{background:#f9f9f9;padding:15px;margin-bottom:10px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
-.card img{max-width:100%;border-radius:8px;margin-bottom:10px;}
-.table-responsive{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;}
-table th,table td{padding:10px;text-align:left;border-bottom:1px solid #eee;}
-table th{background:#f2f2f2;}
-@media(max-width:768px){nav{flex-direction:column;} nav button{margin-bottom:10px;}}
+:root{
+  --bg:#f3f7f3;
+  --panel:#ffffff;
+  --muted:#6b7280;
+  --accent:#168f57; /* green */
+  --accent-2:#0f6f44;
+  --text:#111827;
+  --card-shadow: 0 6px 20px rgba(13, 24, 19, 0.06);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.topbar{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:700}
+.controls{display:flex;gap:10px;align-items:center}
+.btn{border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.15)}
+.btn-white{background:#fff;color:var(--accent);font-weight:600}
+.container{max-width:1180px;margin:22px auto;padding:0 18px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+.card{background:var(--panel);border-radius:12px;padding:18px;box-shadow:var(--card-shadow);margin-bottom:18px}
+.header{display:flex;justify-content:space-between;align-items:center}
+.h1{margin:0;font-size:20px}
+.muted{color:var(--muted);font-size:13px}
+.inputs input, .inputs select, .inputs textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6efea;margin-top:8px}
+.row{display:flex;gap:8px}
+.small{font-size:13px;padding:6px 8px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tab-btn{background:#fff;border:1px solid #eef6ee;padding:8px 12px;border-radius:10px;cursor:pointer}
+.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.list-item{padding:10px;border-radius:10px;border:1px solid #f0f6f0;margin-bottom:8px;background:#fbfffb}
+.table{width:100%;border-collapse:collapse;margin-top:8px}
+.table th,.table td{padding:10px;border-bottom:1px solid #eef6ee;text-align:left}
+.right-panel .card{position:sticky;top:20px}
+.hidden{display:none}
+.footer-note{font-size:12px;color:var(--muted);margin-top:8px}
+
+/* dark mode */
+body.dark{
+  --bg:#0b1220; --panel:#071021; --muted:#9aa7b2; --accent:#1fb169; --accent-2:#16945a; --text:#e6f7ec;
+  background:linear-gradient(180deg,#071021,#081822);
+}
+.dark .card{box-shadow: 0 6px 20px rgba(0,0,0,0.6)}
+
+/* responsive */
+@media(max-width:980px){.grid{grid-template-columns:1fr}.right-panel .card{position:static}}
 </style>
 </head>
 <body>
-<div class="container">
-<h1>CvSU Organization Hub</h1>
 
-<!-- Auth Section -->
-<section id="auth-section">
-<h2>Login / Signup</h2>
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Password">
-<input type="text" id="name" placeholder="Full Name (Signup)">
-<select id="grade">
-<option value="">Select Grade</option>
-<option value="7">Grade 7</option>
-<option value="8">Grade 8</option>
-<option value="9">Grade 9</option>
-<option value="10">Grade 10</option>
-<option value="11">Grade 11</option>
-<option value="12">Grade 12</option>
-</select>
-<input type="text" id="section" placeholder="Section (e.g., 9-A)">
-<select id="position">
-<option value="">Select Position</option>
-<option value="Member">Member</option>
-<option value="Secretary">Secretary</option>
-<option value="Treasurer">Treasurer</option>
-<option value="VP">VP</option>
-<option value="President">President</option>
-<option value="Auditor">Auditor</option>
-</select>
-<button id="signupBtn">Signup (Email)</button>
-<button id="loginBtn">Login (Email)</button>
-<button id="googleLoginBtn">Login with Google</button>
-</section>
-
-<!-- Dashboard -->
-<section id="dashboard">
-<nav>
-<button data-tab="announcements" class="active">Announcements</button>
-<button data-tab="receipts">Receipts & Budget</button>
-<button data-tab="attendance">Attendance</button>
-<button data-tab="inventory">Inventory</button>
-<button data-tab="forms">Forms</button>
-<button data-tab="masterlist">Masterlist</button>
-<button id="logoutBtn">Logout</button>
-</nav>
-
-<!-- Announcements -->
-<section id="announcements-tab" class="tab-section active">
-<h2>Announcements</h2>
-<input type="text" id="announcement-title" placeholder="Title">
-<textarea id="announcement-msg" placeholder="Message"></textarea>
-<button id="post-announcement-btn">Post Announcement</button>
-<div id="announcement-list"></div>
-</section>
-
-<!-- Receipts -->
-<section id="receipts-tab" class="tab-section">
-<h2>Receipts</h2>
-<input type="file" id="receipt-file">
-<input type="number" id="receipt-amount" placeholder="Amount (₱)">
-<textarea id="receipt-desc" placeholder="Description"></textarea>
-<button id="upload-receipt-btn">Upload Receipt</button>
-<div id="receipt-list"></div>
-</section>
-
-<!-- Attendance -->
-<section id="attendance-tab" class="tab-section">
-<h2>Attendance</h2>
-<input type="text" id="attendance-event" placeholder="Event Name">
-<button id="mark-attendance-btn">Mark Attendance</button>
-<div id="attendance-list"></div>
-</section>
-
-<!-- Inventory -->
-<section id="inventory-tab" class="tab-section">
-<h2>Inventory</h2>
-<input type="text" id="inventory-name" placeholder="Item Name">
-<input type="number" id="inventory-qty" placeholder="Quantity">
-<input type="text" id="inventory-location" placeholder="Location">
-<input type="file" id="inventory-image">
-<button id="add-inventory-btn">Add Item</button>
-<div id="inventory-list"></div>
-</section>
-
-<!-- Forms -->
-<section id="forms-tab" class="tab-section">
-<h2>Forms</h2>
-<input type="file" id="form-file">
-<input type="text" id="form-name" placeholder="Form Name">
-<button id="upload-form-btn">Upload Form</button>
-<div id="forms-list"></div>
-</section>
-
-<!-- Masterlist -->
-<section id="masterlist-tab" class="tab-section">
-<h2>Masterlist</h2>
-<div id="masterlist-table" class="table-responsive"></div>
-</section>
-
+<!-- Topbar -->
+<div class="topbar">
+  <div class="brand">CvSU Org Hub — Batch Officers</div>
+  <div class="controls">
+    <button id="toggleTheme" class="btn btn-ghost">Toggle Theme</button>
+    <button id="topResetYear" class="btn btn-white hidden">Reset Year</button>
+    <button id="topLogout" class="btn btn-ghost hidden">Logout</button>
+  </div>
 </div>
 
+<div class="container">
+
+  <!-- AUTH CARDS: LOGIN (separate) and SIGNUP (separate) -->
+  <div id="authArea">
+
+    <!-- LOGIN CARD -->
+    <div id="loginCard" class="card">
+      <div class="header">
+        <div>
+          <h2 class="h1">Login</h2>
+          <div class="muted">If you already have an account — sign in here.</div>
+        </div>
+      </div>
+
+      <div class="inputs" style="margin-top:12px">
+        <label class="muted">Email</label>
+        <input id="loginEmail" type="email" placeholder="you@school.edu">
+        <label class="muted">Password</label>
+        <input id="loginPassword" type="password" placeholder="password">
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="loginBtn" class="btn" style="background:var(--accent);color:#fff;border-radius:8px">Login</button>
+          <button id="loginGoogleBtn" class="btn btn-ghost">Login with Google</button>
+        </div>
+        <div class="footer-note">Don't have an account? Use the Signup card to register.</div>
+      </div>
+    </div>
+
+    <!-- SIGNUP CARD -->
+    <div id="signupCard" class="card">
+      <div class="header"><div><h2 class="h1">Sign Up</h2><div class="muted">Create a new account. <span style="color:var(--accent)">(IF NOT OFFICER DO NOT SELECT)</span></div></div></div>
+
+      <div class="inputs" style="margin-top:12px">
+        <label class="muted">Email</label><input id="signupEmail" type="email" placeholder="you@school.edu">
+        <label class="muted">Password</label><input id="signupPassword" type="password" placeholder="password (min 6)">
+        <label class="muted">Confirm Password</label><input id="signupPassword2" type="password" placeholder="confirm password">
+        <label class="muted">Full name</label><input id="signupName" type="text" placeholder="Juan dela Cruz">
+        <div style="display:flex;gap:8px">
+          <div style="flex:1">
+            <label class="muted">Grade</label>
+            <select id="signupGrade"><option value="">Select grade</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+          </div>
+          <div style="width:140px">
+            <label class="muted">Section</label>
+            <select id="signupSection"><option value="">Select</option><option value="A">A</option><option value="B">B</option></select>
+          </div>
+        </div>
+
+        <label class="muted">Select Officer Role (optional) <span style="color:var(--accent)">( IF NOT OFFICER DO NOT SELECT )</span></label>
+        <select id="signupRole">
+          <option value="None">None</option>
+          <option value="President">President</option>
+          <option value="VP">Vice President</option>
+          <option value="Secretary">Secretary</option>
+          <option value="Treasurer">Treasurer</option>
+          <option value="Auditor">Auditor</option>
+          <option value="PIO">PIO</option>
+        </select>
+
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="signupBtn" class="btn" style="background:var(--accent);color:#fff;border-radius:8px">Sign Up</button>
+          <button id="signupGoogleBtn" class="btn btn-ghost">Sign up with Google</button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- authArea -->
+
+  <!-- APP AREA (hidden until login/profile complete) -->
+  <div id="appArea" class="hidden">
+
+    <!-- welcome + tabs -->
+    <div class="card header">
+      <div>
+        <h2 id="welcomeTitle" class="h1">Welcome</h2>
+        <div id="welcomeMeta" class="muted">Batch / Grade • Section • Role</div>
+      </div>
+      <div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div id="userRoleBadge" class="muted" style="background:#eef9f0;padding:6px 10px;border-radius:8px"></div>
+        </div>
+        <div class="tabs" style="margin-top:10px" id="tabsContainer">
+          <button class="tab-btn active" data-tab="dashboardTab">Dashboard</button>
+          <button class="tab-btn" data-tab="officersTab">Officers</button>
+          <button class="tab-btn" data-tab="membersTab">Members</button>
+          <button class="tab-btn" data-tab="attendanceTab">Attendance</button>
+          <button class="tab-btn" data-tab="inventoryTab">Inventory</button>
+          <button class="tab-btn" data-tab="receiptsTab">Receipts</button>
+          <button class="tab-btn" data-tab="announcementsTab">Announcements</button>
+          <button class="tab-btn" data-tab="formsTab">Forms</button>
+          <button class="tab-btn" data-tab="settingsTab">Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- LEFT: main content -->
+      <div>
+
+        <!-- Dashboard tab -->
+        <div id="dashboardTab" class="card">
+          <h3>Dashboard</h3>
+          <div class="muted">Quick overview for your batch & section.</div>
+          <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+            <div class="card" style="flex:1;min-width:220px">
+              <strong id="statMembers">Members: 0</strong><div class="muted">Total in your Grade & Section</div>
+            </div>
+            <div class="card" style="flex:1;min-width:220px">
+              <strong id="statOfficers">Officers: 0</strong><div class="muted">Assigned officers</div>
+            </div>
+            <div class="card" style="flex:1;min-width:220px">
+              <strong id="statInventory">Inventory Items: 0</strong><div class="muted">Items assigned to your Grade/Section</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Officers tab -->
+        <div id="officersTab" class="card hidden">
+          <h3>Officers (Batch)</h3>
+          <div class="muted">Only one person per officer role. Assign or remove officers here.</div>
+
+          <div style="margin-top:12px">
+            <div id="officersList"></div>
+          </div>
+
+          <div style="margin-top:12px">
+            <label class="muted">Assign officer by user email</label>
+            <div style="display:flex;gap:8px">
+              <input id="assignEmail" class="inputs" placeholder="member@example.com">
+              <select id="assignRole">
+                <option value="">Select role</option>
+                <option value="President">President</option>
+                <option value="VP">Vice President</option>
+                <option value="Secretary">Secretary</option>
+                <option value="Treasurer">Treasurer</option>
+                <option value="Auditor">Auditor</option>
+                <option value="PIO">PIO</option>
+              </select>
+              <button id="assignBtn" class="btn" style="background:var(--accent);color:#fff">Assign</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Members tab -->
+        <div id="membersTab" class="card hidden">
+          <h3>Members</h3>
+          <div class="muted">Manual masterlist. Add or remove members for the batch.</div>
+
+          <div style="margin-top:12px">
+            <label class="muted">Add member</label>
+            <div style="display:flex;gap:8px">
+              <input id="memberName" placeholder="Full name">
+              <select id="memberGrade"><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+              <select id="memberSection"><option value="A">A</option><option value="B">B</option></select>
+              <button id="addMemberBtn" class="btn" style="background:var(--accent);color:#fff">Add</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4>Masterlist (this grade & section)</h4>
+            <div id="masterlistTable"></div>
+          </div>
+        </div>
+
+        <!-- Attendance -->
+        <div id="attendanceTab" class="card hidden">
+          <h3>Attendance</h3>
+          <div class="muted">Create an event and mark all members in grade+section as present (or mark individually - basic mode).</div>
+
+          <label class="muted">Event name</label>
+          <input id="attEvent" placeholder="Weekly meeting">
+          <div style="display:flex;gap:8px">
+            <select id="attGrade"><option value="">Grade (default: your grade)</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+            <select id="attSection"><option value="">Section (default: your section)</option><option value="A">A</option><option value="B">B</option></select>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="attMarkAll" class="btn" style="background:var(--accent);color:#fff">Mark All Present</button>
+            <button id="attListBtn" class="btn btn-ghost">View Events</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4>Events</h4>
+            <div id="attEventsList"></div>
+          </div>
+        </div>
+
+        <!-- Inventory -->
+        <div id="inventoryTab" class="card hidden">
+          <h3>Inventory</h3>
+          <div class="muted">Add items and optionally upload image.</div>
+
+          <label class="muted">Item name</label><input id="invItemName" placeholder="Projector cable">
+          <label class="muted">Quantity</label><input id="invItemQty" type="number" value="1">
+          <label class="muted">Location / Note</label><input id="invItemLoc" placeholder="Store room">
+          <label class="muted">Image (optional)</label><input id="invItemFile" type="file">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="invItemGrade"><option value="">Grade (all)</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+            <select id="invItemSection"><option value="">Section (all)</option><option value="A">A</option><option value="B">B</option></select>
+            <button id="invAddBtn" class="btn" style="background:var(--accent);color:#fff">Add Item</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4>Items</h4>
+            <div id="invItemsList"></div>
+          </div>
+        </div>
+
+        <!-- Receipts -->
+        <div id="receiptsTab" class="card hidden">
+          <h3>Receipts</h3>
+          <div class="muted">Upload receipts (Treasurer/President allowed).</div>
+          <label class="muted">File</label><input id="receiptFileInput" type="file">
+          <label class="muted">Amount</label><input id="receiptAmountInput" type="number" placeholder="0">
+          <label class="muted">Note</label><input id="receiptNoteInput" type="text" placeholder="Bought snacks for meeting">
+          <button id="receiptUploadBtn" class="btn" style="background:var(--accent);color:#fff;margin-top:8px">Upload</button>
+
+          <div style="margin-top:12px">
+            <h4>Recent receipts</h4>
+            <div id="receiptsList"></div>
+          </div>
+        </div>
+
+        <!-- Announcements -->
+        <div id="announcementsTab" class="card hidden">
+          <h3>Announcements</h3>
+          <label class="muted">Title</label><input id="annTitleInput" placeholder="Meeting">
+          <label class="muted">Message</label><textarea id="annMsgInput" rows="3" placeholder="Details..."></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="annFilterGrade"><option value="">All Grades</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+            <select id="annFilterSection"><option value="">All Sections</option><option value="A">A</option><option value="B">B</option></select>
+            <button id="annPostBtn" class="btn" style="background:var(--accent);color:#fff">Post</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4>Announcements</h4>
+            <div id="announcementsList"></div>
+          </div>
+        </div>
+
+        <!-- Forms -->
+        <div id="formsTab" class="card hidden">
+          <h3>Forms & Templates</h3>
+          <label class="muted">Form name</label><input id="formNameInput" placeholder="Event proposal">
+          <label class="muted">Upload file</label><input id="formFileInput" type="file">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <select id="formGradeFilter"><option value="">All Grades</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+            <select id="formSectionFilter"><option value="">All Sections</option><option value="A">A</option><option value="B">B</option></select>
+            <button id="formUploadBtn" class="btn" style="background:var(--accent);color:#fff">Upload Form</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4>Forms</h4>
+            <div id="formsListArea"></div>
+          </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settingsTab" class="card hidden">
+          <h3>Settings</h3>
+          <div class="muted">Administrative controls. Only for President / Secretary.</div>
+          <div style="margin-top:12px">
+            <button id="resetYearBtn" class="btn" style="background:#e85d5d;color:#fff">Reset Year (Permanent)</button>
+            <div class="footer-note">Resetting year will delete officers, members, inventory, attendance, receipts, forms, announcements. Auth users remain.</div>
+          </div>
+        </div>
+
+      </div> <!-- end left -->
+
+      <!-- RIGHT: quick panels -->
+      <div class="right-panel">
+
+        <div class="card">
+          <h4>Add member quickly</h4>
+          <label class="muted">Name</label><input id="quickAddName" placeholder="Full name">
+          <div style="display:flex;gap:8px">
+            <select id="quickAddGrade"><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
+            <select id="quickAddSection"><option value="A">A</option><option value="B">B</option></select>
+          </div>
+          <button id="quickAddBtn" class="btn" style="background:var(--accent);color:#fff;margin-top:8px">Add Member</button>
+        </div>
+
+        <div class="card">
+          <h4>Officers (current)</h4>
+          <div id="sideOfficersList"></div>
+        </div>
+
+        <div class="card">
+          <h4>Quick actions</h4>
+          <button id="exportMasterlist" class="btn btn-ghost">Export Masterlist CSV</button>
+          <div class="footer-note">CSV will download masterlist for your grade+section.</div>
+        </div>
+
+      </div>
+
+    </div> <!-- grid -->
+
+  </div> <!-- appArea -->
+
+</div> <!-- container -->
+
+<!-- Scripts -->
 <script type="module">
-// --- Firebase & Supabase Setup ---
+/* ============================
+   FULL APP: Firebase + Supabase
+   ============================ */
+
+/* ---------- Config - replace only if you need to change projects ---------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
+import { getDatabase, ref, set, push, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// --- Firebase Config ---
-const firebaseConfig = { /* your firebase config */ };
+// Firebase config (you provided earlier)
+const firebaseConfig = {
+  apiKey: "AIzaSyAK_41CRZM1pt5zTNqMzy_WdrZu1g8fKks",
+  authDomain: "org-organizer.firebaseapp.com",
+  databaseURL: "https://org-organizer-default-rtdb.firebaseio.com",
+  projectId: "org-organizer",
+  storageBucket: "org-organizer.appspot.com",
+  messagingSenderId: "971435967798",
+  appId: "1:971435967798:web:969835f265d9ee4f879f97",
+  measurementId: "G-STG68DJDWF"
+};
+
+// Supabase config (you provided earlier)
+const SUPABASE_URL = "https://kidiqmlzfsdesqbdvnmk.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZGlxbWx6ZnNkZXNxYmR2bm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MTc2MjAsImV4cCI6MjA3OTE5MzYyMH0.BYxROMP08DTBrwPVEZzletG89yfFWixCPR9L0YG55e4";
+const BUCKET = "org-resources-files";
+
+/* ---------------- init services ---------------- */
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getDatabase(app);
-const auth = getAuth();
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-// --- Supabase ---
-const supabase = createClient("https://kidiqmlzfsdesqbdvnmk.supabase.co","YOUR_SUPABASE_KEY_HERE");
+/* ---------------- utilities ---------------- */
+const $ = (id)=>document.getElementById(id);
+const saveLocal = (p)=>localStorage.setItem('orghub_profile', JSON.stringify(p));
+const loadLocal = ()=>{ try{return JSON.parse(localStorage.getItem('orghub_profile'));}catch(e){return null} };
+const clearLocal = ()=>localStorage.removeItem('orghub_profile');
 
-// --- Persistent Login ---
-function saveUserLocally(u){localStorage.setItem('orgHubUser',JSON.stringify(u));}
-function getSavedUser(){return localStorage.getItem('orgHubUser')?JSON.parse(localStorage.getItem('orgHubUser')):null;}
+const show = (el)=>el.classList.remove('hidden');
+const hide = (el)=>el.classList.add('hidden');
 
-// --- Permissions ---
-const perms = {President:["all"],VP:["announcements","attendance","inventory","budget","forms"],Secretary:["announcements","forms"],Treasurer:["budget","receipts"],Auditor:["budget-view"],Member:["view-only"]};
-function checkPermission(role,action){return perms[role].includes(action)||perms[role].includes("all");}
+/* ---------------- elements ---------------- */
+const loginEmail = $('loginEmail'), loginPassword = $('loginPassword'), loginBtn = $('loginBtn'), loginGoogleBtn = $('loginGoogleBtn');
+const signupEmail = $('signupEmail'), signupPassword = $('signupPassword'), signupPassword2 = $('signupPassword2'), signupName = $('signupName'), signupGrade = $('signupGrade'), signupSection = $('signupSection'), signupRole = $('signupRole'), signupBtn = $('signupBtn'), signupGoogleBtn = $('signupGoogleBtn');
+const authArea = $('authArea'), appArea = $('appArea'), topLogout = $('topLogout'), topResetYear = $('topResetYear');
+const welcomeTitle = $('welcomeTitle'), welcomeMeta = $('welcomeMeta'), userRoleBadge = $('userRoleBadge');
+const tabs = document.querySelectorAll('#tabsContainer .tab-btn');
+const toggleTheme = $('toggleTheme');
+const topResetBtn = $('topResetYear');
+const resetYearBtn = $('resetYearBtn'), btnResetYear = $('btnResetYear');
 
-// --- Auth ---
-async function signupEmail(){
-const email=document.getElementById('email').value;
-const password=document.getElementById('password').value;
-const name=document.getElementById('name').value;
-const grade=document.getElementById('grade').value;
-const section=document.getElementById('section').value;
-const position=document.getElementById('position').value;
-const u = await createUserWithEmailAndPassword(auth,email,password);
-const profile={uid:u.user.uid,email,name,grade,section,position,createdAt:Date.now()};
-await set(ref(db,'users/'+u.user.uid),profile);
-saveUserLocally(profile); showDashboard(profile);}
+/* tab elements map */
+const tabIds = ['dashboardTab','officersTab','membersTab','attendanceTab','inventoryTab','receiptsTab','announcementsTab','formsTab','settingsTab'];
+const tabEls = {}; tabIds.forEach(id=>tabEls[id] = $(id));
 
-async function loginEmail(){
-const email=document.getElementById('email').value;
-const password=document.getElementById('password').value;
-const u = await signInWithEmailAndPassword(auth,email,password);
-const snap=await get(ref(db,'users/'+u.user.uid));
-saveUserLocally(snap.val()); showDashboard(snap.val());
-}
+/* officers & members UI */
+const officersList = $('officersList'), sideOfficersList = $('sideOfficersList');
+const assignEmail = $('assignEmail'), assignRole = $('assignRole'), assignBtn = $('assignBtn');
+const memberName = $('memberName'), memberGrade = $('memberGrade'), memberSection = $('memberSection'), addMemberBtn = $('addMemberBtn'), masterlistTable = $('masterlistTable');
+const quickAddName = $('quickAddName'), quickAddGrade = $('quickAddGrade'), quickAddSection = $('quickAddSection'), quickAddBtn = $('quickAddBtn');
+const statMembers = $('statMembers'), statOfficers = $('statOfficers'), statInventory = $('statInventory');
 
-async function loginGoogle(){
-const res=await signInWithPopup(auth,provider);
-const u=res.user;
-const grade=document.getElementById('grade').value;
-const section=document.getElementById('section').value;
-const position=document.getElementById('position').value;
-const profile={uid:u.uid,email:u.email,name:u.displayName,grade,section,position,createdAt:Date.now()};
-await set(ref(db,'users/'+u.uid),profile);
-saveUserLocally(profile); showDashboard(profile);
-}
+/* attendance */
+const attEvent = $('attEvent'), attGrade = $('attGrade'), attSection = $('attSection'), attMarkAll = $('attMarkAll'), attListBtn = $('attListBtn'), attEventsList = $('attEventsList');
 
-async function logout(){await signOut(auth);localStorage.removeItem('orgHubUser');showLoginPage();}
+/* inventory */
+const invItemName = $('invItemName'), invItemQty = $('invItemQty'), invItemLoc = $('invItemLoc'), invItemFile = $('invItemFile'), invItemGrade = $('invItemGrade'), invItemSection = $('invItemSection'), invAddBtn = $('invAddBtn'), invItemsList = $('invItemsList');
 
-// --- Tabs ---
-document.querySelectorAll('nav button[data-tab]').forEach(b=>b.addEventListener('click',()=>{showTab(b.dataset.tab);}));
-function showTab(tab){document.querySelectorAll('#dashboard section.tab-section').forEach(s=>s.classList.remove('active'));document.getElementById(tab+'-tab').classList.add('active');}
+/* receipts */
+const receiptFileInput = $('receiptFileInput'), receiptAmountInput = $('receiptAmountInput'), receiptNoteInput = $('receiptNoteInput'), receiptUploadBtn = $('receiptUploadBtn'), receiptsList = $('receiptsList');
 
-// --- Show / Hide ---
-function showLoginPage(){document.getElementById('auth-section').style.display='block';document.getElementById('dashboard').style.display='none';}
-function showDashboard(user){document.getElementById('auth-section').style.display='none';document.getElementById('dashboard').style.display='block';showTab('announcements');initDashboard(user);}
+/* announcements */
+const annTitleInput = $('annTitleInput'), annMsgInput = $('annMsgInput'), annFilterGrade = $('annFilterGrade'), annFilterSection = $('annFilterSection'), annPostBtn = $('annPostBtn'), announcementsList = $('announcementsList');
 
-// --- Dashboard Logic ---
-function initDashboard(user){
-const uid=user.uid;
+/* forms */
+const formNameInput = $('formNameInput'), formFileInput = $('formFileInput'), formGradeFilter = $('formGradeFilter'), formSectionFilter = $('formSectionFilter'), formUploadBtn = $('formUploadBtn'), formsListArea = $('formsListArea');
 
-// Announcements
-document.getElementById('post-announcement-btn').onclick=async()=>{
-if(!checkPermission(user.position,'announcements')) return alert("No permission");
-const title=document.getElementById('announcement-title').value;
-const msg=document.getElementById('announcement-msg').value;
-await push(ref(db,'announcements'),{title,msg,date:Date.now(),grades:[user.grade],sections:[user.section]});
-};
-onValue(ref(db,'announcements'),snap=>{
-const data=snap.val()||{}; const list=document.getElementById('announcement-list'); list.innerHTML='';
-for(const id in data){const a=data[id];if(a.grades.includes(user.grade)&&a.sections.includes(user.section)){
-const div=document.createElement('div');div.className='card';div.innerHTML=`<b>${a.title}</b><p>${a.msg}</p>`;list.appendChild(div);}}});
+/* exports */
+const exportMasterlist = $('exportMasterlist');
 
-// Receipts
-document.getElementById('upload-receipt-btn').onclick=async()=>{
-if(!checkPermission(user.position,'receipts')) return alert("No permission");
-const file=document.getElementById('receipt-file').files[0];if(!file) return alert("Select file");
-const amount=document.getElementById('receipt-amount').value; const desc=document.getElementById('receipt-desc').value;
-const {data,error}=await supabase.storage.from('org-resources-files').upload('receipts/'+Date.now()+'-'+file.name,file);
-const publicUrl = supabase.storage.from('org-resources-files').getPublicUrl('receipts/'+Date.now()+'-'+file.name).data.publicUrl;
-await push(ref(db,'receipts'),{url:publicUrl,amount,desc,uid,user,date:Date.now(),grade:user.grade,section:user.section});
-};
-onValue(ref(db,'receipts'),snap=>{
-const data=snap.val()||{}; const list=document.getElementById('receipt-list'); list.innerHTML='';
-for(const id in data){ const r=data[id]; if(r.grade===user.grade&&r.section===user.section){
-const div=document.createElement('div');div.className='card';div.innerHTML=`<b>₱${r.amount}</b><p>${r.desc}</p><a href="${r.url}" target="_blank">View File</a>`;list.appendChild(div);}}});
-
-// Attendance
-document.getElementById('mark-attendance-btn').onclick=async()=>{
-const eventName=document.getElementById('attendance-event').value;
-if(!eventName) return alert("Enter event name");
-const snap = await get(ref(db,'users'));
-const users=snap.val()||{};
-for(const k in users){const u2=users[k]; if(u2.grade===user.grade && u2.section===user.section){
-await set(ref(db,`attendance/${eventName}/${u2.uid}`),'present');}}
-};
-onValue(ref(db,'attendance'),snap=>{
-const data=snap.val()||{}; const list=document.getElementById('attendance-list'); list.innerHTML='';
-for(const event in data){ const div=document.createElement('div'); div.className='card'; div.innerHTML=`<b>${event}</b><p>Attendees: ${Object.keys(data[event]).length}</p>`; list.appendChild(div);}});
-
-// Inventory
-document.getElementById('add-inventory-btn').onclick=async()=>{
-if(!checkPermission(user.position,'inventory')) return alert("No permission");
-const name=document.getElementById('inventory-name').value;
-const qty=document.getElementById('inventory-qty').value;
-const loc=document.getElementById('inventory-location').value;
-const file=document.getElementById('inventory-image').files[0];if(!file) return alert("Select file");
-const {data,error}=await supabase.storage.from('org-resources-files').upload('inventory/'+Date.now()+'-'+file.name,file);
-const url=supabase.storage.from('org-resources-files').getPublicUrl('inventory/'+Date.now()+'-'+file.name).data.publicUrl;
-await push(ref(db,'inventory'),{name,qty,loc,url,grade:user.grade,section:user.section});
-};
-onValue(ref(db,'inventory'),snap=>{
-const data=snap.val()||{}; const list=document.getElementById('inventory-list'); list.innerHTML='';
-for(const id in data){ const i=data[id]; if(i.grade===user.grade&&i.section===user.section){
-const div=document.createElement('div');div.className='card';div.innerHTML=`<b>${i.name}</b><p>Qty: ${i.qty} | Location: ${i.loc}</p><img src="${i.url}">`;list.appendChild(div);}}});
-
-// Forms
-document.getElementById('upload-form-btn').onclick=async()=>{
-if(!checkPermission(user.position,'forms')) return alert("No permission");
-const name=document.getElementById('form-name').value;
-const file=document.getElementById('form-file').files[0];if(!file) return alert("Select file");
-const {data,error}=await supabase.storage.from('org-resources-files').upload('forms/'+Date.now()+'-'+file.name,file);
-const url=supabase.storage.from('org-resources-files').getPublicUrl('forms/'+Date.now()+'-'+file.name).data.publicUrl;
-await push(ref(db,'forms'),{name,url,grade:user.grade,section:user.section});
-};
-onValue(ref(db,'forms'),snap=>{
-const data=snap.val()||{}; const list=document.getElementById('forms-list'); list.innerHTML='';
-for(const id in data){ const f=data[id]; if(f.grade===user.grade&&f.section===user.section){
-const div=document.createElement('div');div.className='card';div.innerHTML=`<b>${f.name}</b><a href="${f.url}" target="_blank">Download</a>`;list.appendChild(div);}}});
-
-// Masterlist
-onValue(ref(db,'users'),snap=>{
-const data=snap.val()||{}; const table=document.getElementById('masterlist-table'); table.innerHTML='<table><tr><th>Name</th><th>Email</th><th>Grade</th><th>Section</th><th>Position</th></tr>';
-for(const id in data){ const u2=data[id]; if(u2.grade===user.grade&&u2.section===user.section){
-table.innerHTML+=`<tr><td>${u2.name}</td><td>${u2.email}</td><td>${u2.grade}</td><td>${u2.section}</td><td>${u2.position}</td></tr>`;}}table.innerHTML+='</table>';
+/* theme */
+let darkMode = false;
+toggleTheme.addEventListener('click', ()=>{
+  darkMode = !darkMode;
+  document.body.classList.toggle('dark', darkMode);
 });
 
-document.getElementById('logoutBtn').onclick=logout;
+/* tab switching */
+tabs.forEach(b=>b.addEventListener('click', ()=>{
+  tabs.forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  const t = b.dataset.tab;
+  tabIds.forEach(id=>hide($(id)));
+  show($(t));
+}));
+
+/* show/hide helpers for auth/dashboard */
+function showAuth(){ show($('authArea')); hide(appArea); hide(topLogout); hide(topResetYear); }
+function showApp(){ hide($('authArea')); show(appArea); show(topLogout); show(topResetYear); }
+
+/* roles list that are considered officers */
+const OFFICER_ROLES = ['President','VP','Secretary','Treasurer','Auditor','PIO'];
+
+/* ---------- helper: check officer taken ---------- */
+async function isOfficerTaken(role){
+  if(!role || role==='None') return false;
+  const snap = await get(ref(db, `officers/${role}`));
+  return snap.exists();
 }
 
-// --- On Load ---
-window.addEventListener('DOMContentLoaded',()=>{const u=getSavedUser(); u?showDashboard(u):showLoginPage();});
-document.getElementById('signupBtn').onclick=signupEmail;
-document.getElementById('loginBtn').onclick=loginEmail;
-document.getElementById('googleLoginBtn').onclick=loginGoogle;
+/* ---------- helper: save profile to DB & local ---------- */
+async function saveUserProfile(uid, profile){
+  // profile: { uid, email, name, grade, section, role }
+  await set(ref(db, `users/${uid}`), profile);
+  // add to members list if not officer-only (we still add everyone to members)
+  await push(ref(db,'members'), { uid: profile.uid, name: profile.name, email: profile.email || '', grade: profile.grade, section: profile.section });
+  saveLocal(profile);
+}
+
+/* ---------- Signup (email) ---------- */
+signupBtn.addEventListener('click', async ()=>{
+  const email = signupEmail.value.trim();
+  const pass = signupPassword.value;
+  const pass2 = signupPassword2.value;
+  const name = signupName.value.trim();
+  const grade = signupGrade.value;
+  const section = signupSection.value;
+  const role = signupRole.value || 'None';
+
+  if(!email||!pass||!pass2||!name||!grade||!section) return alert('Fill all required fields.');
+  if(pass !== pass2) return alert('Passwords do not match.');
+  if(role !== 'None'){
+    const taken = await isOfficerTaken(role);
+    if(taken) return alert('This officer role is already filled. Choose another or contact current officer.');
+  }
+
+  try{
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    const uid = cred.user.uid;
+    const profile = { uid, email, name, grade, section, role: (role==='None' ? 'user' : role), createdAt: Date.now() };
+
+    // If officer role chosen, set officers/{role}
+    if(role !== 'None'){
+      await set(ref(db, `officers/${role}`), { uid, name, email, assignedAt: Date.now() });
+    }
+    await saveUserProfile(uid, profile);
+    afterLogin(profile);
+  }catch(err){
+    console.error(err);
+    alert('Signup error: '+(err.message||err));
+  }
+});
+
+/* ---------- Login (email) ---------- */
+loginBtn.addEventListener('click', async ()=>{
+  const email = loginEmail.value.trim();
+  const pass = loginPassword.value;
+  if(!email||!pass) return alert('Enter email & password');
+  try{
+    const cred = await signInWithEmailAndPassword(auth, email, pass);
+    const uid = cred.user.uid;
+    const snap = await get(ref(db, `users/${uid}`));
+    const profile = snap.exists()? snap.val() : null;
+    if(!profile) return alert('Profile not completed. Please signup or contact admin.');
+    afterLogin(profile);
+  }catch(err){
+    console.error(err);
+    alert('Login failed: '+(err.message||err));
+  }
+});
+
+/* ---------- Google Signup/Login (two-step complete-profile flow) ---------- */
+signupGoogleBtn.addEventListener('click', googleFlow);
+loginGoogleBtn.addEventListener('click', async ()=>{
+  // For login via Google: sign-in then check if profile exists; if not, force complete-profile
+  try{
+    const res = await signInWithPopup(auth, googleProvider);
+    const guser = res.user;
+    const snap = await get(ref(db, `users/${guser.uid}`));
+    if(snap.exists()){
+      // profile exists -> login
+      afterLogin(snap.val());
+    } else {
+      // profile missing -> force complete profile using two-step UI
+      // we reuse signup card fields to complete profile
+      signupEmail.value = guser.email || '';
+      signupName.value = guser.displayName || '';
+      // tell user to complete grade/section/role and click Sign Up (this will set using the same handler)
+      alert('Complete your profile (grade, section, and role selection) on the Sign Up card, then click Sign Up to finish.');
+      // Focus the signup card
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+  }catch(err){
+    console.error(err); alert('Google login error: '+(err.message||err));
+  }
+});
+async function googleFlow(){
+  // starts Google and then forces complete profile flow (signup card)
+  try{
+    const res = await signInWithPopup(auth, googleProvider);
+    const guser = res.user;
+    // prefill signup fields
+    signupEmail.value = guser.email || '';
+    signupName.value = guser.displayName || '';
+    // show note: complete profile and press Sign Up
+    alert('You signed in with Google. Complete Grade / Section and pick a role (or None) on the Sign Up card, then click Sign Up to finish account creation.');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){ console.error(err); alert('Google error: '+(err.message||err)); }
+}
+
+/* ---------- after login UI ---------- */
+function afterLogin(profile){
+  // profile = { uid, email, name, grade, section, role }
+  saveLocal(profile);
+  hide($('authArea')); show(appArea);
+  show(topLogout); show(topResetYear);
+  welcomeTitle.textContent = `Hello, ${profile.name || profile.email}`;
+  welcomeMeta.textContent = `Grade ${profile.grade} • Section ${profile.section} • ${profile.role}`;
+  userRoleBadge.textContent = profile.role;
+  // show/hide reset top button for President
+  if(profile.role === 'President'){ show(topResetYear); show(resetYearBtn); } else { hide(topResetYear); hide(resetYearBtn); }
+
+  // load realtime data watchers (only once)
+  initRealtime(profile);
+}
+
+/* ---------- initRealtime: watchers for lists ---------- */
+let realtimeInitialized = false;
+function initRealtime(profile){
+  if(realtimeInitialized) return; realtimeInitialized = true;
+
+  // officers list
+  onValue(ref(db,'officers'), snap=>{
+    const data = snap.val()||{};
+    officersList.innerHTML = '';
+    sideOfficersList.innerHTML = '';
+    let count = 0;
+    Object.entries(data).forEach(([role,obj])=>{
+      count++;
+      const html = `<div class="list-item"><strong>${role}</strong><div class="muted">${obj.name || obj.email || obj.uid}</div><div style="margin-top:8px"><button data-role="${role}" class="btn btn-ghost removeOfficer">Remove</button></div></div>`;
+      officersList.insertAdjacentHTML('beforeend', html);
+      const small = `<div class="list-item"><strong>${role}</strong><div class="muted">${obj.name||obj.email||''}</div></div>`;
+      sideOfficersList.insertAdjacentHTML('beforeend', small);
+    });
+    statOfficers.textContent = `Officers: ${count}`;
+    // attach remove handlers
+    document.querySelectorAll('.removeOfficer').forEach(b=>{
+      b.onclick = async (e)=>{
+        const role = e.target.dataset.role;
+        if(!confirm(`Remove ${role}?`)) return;
+        await remove(ref(db, `officers/${role}`));
+        alert(`${role} removed`);
+      };
+    });
+  });
+
+  // members list (masterlist)
+  onValue(ref(db,'members'), snap=>{
+    const data = snap.val()||{};
+    // update counters and masterlist table filtered by current user's grade & section stored in local
+    const profileLocal = loadLocal();
+    const membersRows = [];
+    let count = 0;
+    Object.entries(data).forEach(([k,m])=>{
+      if(m.grade == profileLocal.grade && m.section == profileLocal.section){
+        count++;
+        membersRows.push(`<tr><td>${m.name}</td><td>${m.email||''}</td><td>${m.grade}</td><td>${m.section}</td><td><button class="btn btn-ghost removeMember" data-key="${k}">Remove</button></td></tr>`);
+      }
+    });
+    statMembers.textContent = `Members: ${count}`;
+    masterlistTable.innerHTML = `<table class="table"><thead><tr><th>Name</th><th>Email</th><th>Grade</th><th>Section</th><th></th></tr></thead><tbody>${membersRows.join('')||'<tr><td colspan="5" class="muted">No members</td></tr>'}</tbody></table>`;
+    document.querySelectorAll('.removeMember').forEach(b=>b.onclick=async (e)=>{
+      const key = e.target.dataset.key;
+      if(!confirm('Remove member?')) return;
+      await remove(ref(db, `members/${key}`));
+    });
+  });
+
+  // inventory list
+  onValue(ref(db,'inventory'), snap=>{
+    const data = snap.val()||{};
+    const profileLocal = loadLocal();
+    const itemsHtml = [];
+    let count = 0;
+    Object.entries(data).forEach(([k,i])=>{
+      // filter by grade/section: if item specifies grade/section only then show if matches; empty means global
+      if(i.grade && i.grade != profileLocal.grade) return;
+      if(i.section && i.section != profileLocal.section) return;
+      count++;
+      itemsHtml.push(`<div class="list-item"><strong>${i.name}</strong><div class="muted">Qty: ${i.qty} • ${i.loc||''}</div>${i.url?`<div style="margin-top:8px"><img src="${i.url}" style="max-width:100%;border-radius:8px"></div>`:''}</div>`);
+    });
+    invItemsList.innerHTML = itemsHtml.join('') || '<div class="muted">No inventory</div>';
+    statInventory.textContent = `Inventory Items: ${count}`;
+  });
+
+  // receipts
+  onValue(ref(db,'receipts'), snap=>{
+    const data = snap.val()||{};
+    const profileLocal = loadLocal();
+    const html = [];
+    Object.entries(data).sort((a,b)=>b[1].date - a[1].date).forEach(([k,r])=>{
+      if(r.grade && r.grade != profileLocal.grade) return;
+      if(r.section && r.section != profileLocal.section) return;
+      html.push(`<div class="list-item"><strong>₱${r.amount}</strong> <div class="muted">${r.note||''}</div><div style="margin-top:8px"><a href="${r.url}" target="_blank">View</a></div></div>`);
+    });
+    receiptsList.innerHTML = html.join('') || '<div class="muted">No receipts</div>';
+  });
+
+  // announcements
+  onValue(ref(db,'announcements'), snap=>{
+    const data = snap.val()||{};
+    const profileLocal = loadLocal();
+    const html = [];
+    Object.entries(data).sort((a,b)=>b[1].date - a[1].date).forEach(([k,a])=>{
+      // filter
+      if(a.grade && a.grade != profileLocal.grade) return;
+      if(a.section && a.section != profileLocal.section) return;
+      html.push(`<div class="list-item"><strong>${a.title}</strong><div class="muted">${new Date(a.date).toLocaleString()}</div><div style="margin-top:8px">${a.msg}</div></div>`);
+    });
+    announcementsList.innerHTML = html.join('') || '<div class="muted">No announcements</div>';
+  });
+
+  // forms
+  onValue(ref(db,'forms'), snap=>{
+    const data = snap.val()||{};
+    const profileLocal = loadLocal();
+    const html = [];
+    Object.entries(data).sort((a,b)=>b[1].date - a[1].date).forEach(([k,f])=>{
+      if(f.grade && f.grade != profileLocal.grade) return;
+      if(f.section && f.section != profileLocal.section) return;
+      html.push(`<div class="list-item"><strong>${f.name}</strong><div style="margin-top:8px"><a href="${f.url}" target="_blank">Download</a></div></div>`);
+    });
+    formsListArea.innerHTML = html.join('') || '<div class="muted">No forms</div>';
+  });
+
+  // attendance events listing
+  onValue(ref(db,'attendance'), snap=>{
+    const data = snap.val()||{};
+    const html = [];
+    Object.entries(data).forEach(([event, attendees])=>{
+      const meta = attendees.__meta || {};
+      const count = Object.keys(attendees).filter(k=>k!=="__meta").length;
+      html.push(`<div class="list-item"><strong>${event}</strong><div class="muted">Total present: ${count} • ${meta.grade||'all'} ${meta.section||''}</div></div>`);
+    });
+    attEventsList.innerHTML = html.join('') || '<div class="muted">No events</div>';
+  });
+
+} // end initRealtime
+
+/* ---------- actions: assign officer ---------- */
+assignBtn.addEventListener('click', async ()=>{
+  const email = assignEmail.value.trim();
+  const role = assignRole.value;
+  if(!email||!role) return alert('Provide email and role');
+  // check taken
+  const taken = await isOfficerTaken(role);
+  if(taken) return alert('Role already taken');
+  // find user by email in users list
+  const usersSnap = await get(ref(db,'users'));
+  const users = usersSnap.val()||{};
+  let found = null;
+  Object.entries(users).forEach(([k,u])=>{ if(u.email && u.email.toLowerCase()===email.toLowerCase()) found = u; });
+  if(!found) return alert('User not found. The user must have an account first.');
+  await set(ref(db, `officers/${role}`), { uid: found.uid, name: found.name||found.email, email: found.email, assignedAt: Date.now() });
+  // update user's role in users/{uid}
+  await update(ref(db, `users/${found.uid}`), { role });
+  assignEmail.value=''; assignRole.value='';
+  alert('Officer assigned');
+});
+
+/* ---------- add member ---------- */
+addMemberBtn.addEventListener('click', async ()=>{
+  const name = memberName.value.trim();
+  const grade = memberGrade.value;
+  const section = memberSection.value;
+  if(!name||!grade||!section) return alert('Fill name/grade/section');
+  await push(ref(db,'members'), { name, grade, section, email:'' });
+  memberName.value=''; alert('Member added');
+});
+
+/* quick add */
+quickAddBtn.addEventListener('click', async ()=>{
+  const name = quickAddName.value.trim();
+  const grade = quickAddGrade.value;
+  const section = quickAddSection.value;
+  if(!name) return alert('Name required');
+  await push(ref(db,'members'), { name, grade, section, email:'' });
+  quickAddName.value=''; alert('Member added');
+});
+
+/* ---------- mark attendance (auto mark all) ---------- */
+attMarkAll.addEventListener('click', async ()=>{
+  const profile = loadLocal(); if(!profile) return alert('Login');
+  if(!attEvent.value.trim()) return alert('Event name required');
+  // permission: Secretary or President
+  if(!['Secretary','President','VP'].includes(profile.role) && profile.role !== 'Secretary' && profile.role !== 'President' && profile.role !== 'VP') {
+    // allow Secretary, VP, President
+    // else deny
+    // But members can view only
+    if(!confirm('You might not have permission to mark attendance. Proceed?')) return;
+  }
+  const grade = attGrade.value || profile.grade;
+  const section = attSection.value || profile.section;
+  const membersSnap = await get(ref(db,'members'));
+  const members = membersSnap.val()||{};
+  const updates = {};
+  Object.entries(members).forEach(([k,m])=>{
+    if(String(m.grade)===String(grade) && m.section === section){
+      updates[`attendance/${attEvent.value}/${m.uid || ('m'+k)}`] = 'present';
+    }
+  });
+  updates[`attendance/${attEvent.value}/__meta`] = { grade, section, createdBy: profile.uid, date: Date.now() };
+  await update(ref(db,'/'), updates);
+  attEvent.value=''; alert('Marked attendance for event');
+});
+
+/* ---------- inventory add ---------- */
+invAddBtn.addEventListener('click', async ()=>{
+  const profile = loadLocal(); if(!profile) return alert('Login');
+  if(!invItemName.value.trim()) return alert('Item name required');
+  // permission: Treasurer or President or VP
+  if(!['Treasurer','President','VP'].includes(profile.role) && profile.role !== 'Treasurer' && profile.role !== 'President' && profile.role !== 'VP') {
+    if(!confirm('You may not have permission to add inventory. Proceed?')) return;
+  }
+  const name = invItemName.value.trim();
+  const qty = Number(invItemQty.value) || 1;
+  const loc = invItemLoc.value.trim();
+  const grade = invItemGrade.value || '';
+  const section = invItemSection.value || '';
+  const file = invItemFile.files[0];
+  let url = '';
+  try{
+    if(file){
+      const path = `inventory/${Date.now()}-${file.name}`;
+      const r = await supabase.storage.from(BUCKET).upload(path, file);
+      if(r.error) throw r.error;
+      url = (await supabase.storage.from(BUCKET).getPublicUrl(path)).data.publicUrl;
+    }
+    await push(ref(db,'inventory'), { name, qty, loc, url, grade, section, addedBy: profile.uid, date: Date.now() });
+    invItemName.value=''; invItemQty.value=1; invItemLoc.value=''; invItemFile.value='';
+    alert('Inventory added');
+  }catch(err){ console.error(err); alert('Inventory upload failed: '+(err.message||err)); }
+});
+
+/* ---------- receipts upload ---------- */
+receiptUploadBtn.addEventListener('click', async ()=>{
+  const profile = loadLocal(); if(!profile) return alert('Login');
+  // only Treasurer, President allowed
+  if(!['Treasurer','President'].includes(profile.role)) return alert('Only Treasurer or President can upload receipts.');
+  const file = receiptFileInput.files[0];
+  if(!file) return alert('Choose file');
+  const amount = Number(receiptAmountInput.value)||0;
+  const note = receiptNoteInput.value || '';
+  try{
+    const path = `receipts/${Date.now()}-${file.name}`;
+    const res = await supabase.storage.from(BUCKET).upload(path, file);
+    if(res.error) throw res.error;
+    const url = (await supabase.storage.from(BUCKET).getPublicUrl(path)).data.publicUrl;
+    await push(ref(db,'receipts'), { url, amount, note, uploadedBy: profile.uid, grade: profile.grade, section: profile.section, date: Date.now() });
+    receiptFileInput.value=''; receiptAmountInput.value=''; receiptNoteInput.value='';
+    alert('Receipt uploaded');
+  }catch(err){ console.error(err); alert('Upload failed: '+(err.message||err)); }
+});
+
+/* ---------- announcements ---------- */
+annPostBtn.addEventListener('click', async ()=>{
+  const profile = loadLocal(); if(!profile) return alert('Login');
+  if(!['President','VP','PIO','Secretary'].includes(profile.role) && profile.role !== 'President' && profile.role !== 'VP' && profile.role !== 'Secretary' && profile.role !== 'PIO') {
+    if(!confirm('You may not have permission to post announcements. Continue?')) return;
+  }
+  const title = annTitleInput.value.trim(), msg = annMsgInput.value.trim();
+  const grade = annFilterGrade.value || '', section = annFilterSection.value || '';
+  if(!title||!msg) return alert('Fill title & message');
+  await push(ref(db,'announcements'), { title, msg, grade, section, postedBy: profile.uid, date: Date.now() });
+  annTitleInput.value=''; annMsgInput.value='';
+  alert('Announcement posted');
+});
+
+/* ---------- forms upload ---------- */
+formUploadBtn.addEventListener('click', async ()=>{
+  const profile = loadLocal(); if(!profile) return alert('Login');
+  if(!['President','Secretary','VP'].includes(profile.role)) return alert('Only President/Secretary/VP can upload forms');
+  const file = formFileInput.files[0]; const name = formNameInput.value.trim();
+  if(!file||!name) return alert('Form name & file required');
+  try{
+    const path = `forms/${Date.now()}-${file.name}`;
+    const r = await supabase.storage.from(BUCKET).upload(path, file);
+    if(r.error) throw r.error;
+    const url = (await supabase.storage.from(BUCKET).getPublicUrl(path)).data.publicUrl;
+    await push(ref(db,'forms'), { name, url, grade: formGradeFilter.value||'', section: formSectionFilter.value||'', uploadedBy: profile.uid, date: Date.now() });
+    formNameInput.value=''; formFileInput.value='';
+    alert('Form uploaded');
+  }catch(e){ console.error(e); alert('Form upload failed'); }
+});
+
+/* ---------- assign officer by email (UI also) ---------- */
+/* Done above in assignBtn handler via assignBtn listener */
+
+/* ---------- export masterlist CSV (for current grade/section) ---------- */
+exportMasterlist.addEventListener('click', async ()=>{
+  const profile = loadLocal(); if(!profile) return alert('Login');
+  const snap = await get(ref(db,'members'));
+  const rows = [['name','email','grade','section']];
+  const data = snap.val()||{};
+  Object.values(data).forEach(m=>{
+    if(m.grade==profile.grade && m.section==profile.section) rows.push([m.name||'', m.email||'', m.grade||'', m.section||'']);
+  });
+  if(rows.length<=1) return alert('No members to export');
+  const csv = rows.map(r=>r.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `masterlist_g${loadLocal().grade}_s${loadLocal().section}.csv`; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ---------- reset year (dangerous) ---------- */
+resetYearBtn.addEventListener('click', async ()=>{
+  const profile = loadLocal(); if(!profile) return alert('Login');
+  if(profile.role !== 'President') return alert('Only President can reset year');
+  if(!confirm('Reset year will DELETE officers, members, inventory, attendance, receipts, forms, announcements. This is permanent. Continue?')) return;
+  const paths = ['officers','members','inventory','attendance','receipts','forms','announcements','budget'];
+  const updates = {};
+  paths.forEach(p=>updates[p]=null);
+  await update(ref(db,'/'), updates);
+  alert('Year reset complete');
+});
+
+/* ---------- logout top ---------- */
+topLogout.addEventListener('click', async ()=>{
+  await signOut(auth);
+  clearLocal();
+  location.reload();
+});
+
+/* ---------- startup: check local profile ---------- */
+(function startup(){
+  const profile = loadLocal();
+  if(profile){
+    // verify exists in DB (best-effort)
+    get(ref(db, `users/${profile.uid}`)).then(s=>{
+      if(s.exists()){
+        afterLogin(profile);
+      } else {
+        clearLocal();
+        show($('authArea'));
+      }
+    }).catch(e=>{
+      // if DB read fails, still attempt to show auth
+      show($('authArea'));
+      console.error(e);
+    });
+  } else {
+    show($('authArea'));
+  }
+})();
 
 </script>
 </body>
