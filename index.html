@@ -1,931 +1,2727 @@
-<!doctype html>
+<!doctype doctype>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>CvSU Org Hub — Batch Officers</title>
-
-<!-- Styles: Green + White, toggleable Dark Mode -->
-<style>
-:root{
-  --bg:#f3f7f3;
-  --panel:#ffffff;
-  --muted:#6b7280;
-  --accent:#168f57; /* green */
-  --accent-2:#0f6f44;
-  --text:#111827;
-  --card-shadow: 0 6px 20px rgba(13, 24, 19, 0.06);
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
-.topbar{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-weight:700}
-.controls{display:flex;gap:10px;align-items:center}
-.btn{border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
-.btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.15)}
-.btn-white{background:#fff;color:var(--accent);font-weight:600}
-.container{max-width:1180px;margin:22px auto;padding:0 18px}
-.grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
-.card{background:var(--panel);border-radius:12px;padding:18px;box-shadow:var(--card-shadow);margin-bottom:18px}
-.header{display:flex;justify-content:space-between;align-items:center}
-.h1{margin:0;font-size:20px}
-.muted{color:var(--muted);font-size:13px}
-.inputs input, .inputs select, .inputs textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6efea;margin-top:8px}
-.row{display:flex;gap:8px}
-.small{font-size:13px;padding:6px 8px}
-.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-.tab-btn{background:#fff;border:1px solid #eef6ee;padding:8px 12px;border-radius:10px;cursor:pointer}
-.tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-.list-item{padding:10px;border-radius:10px;border:1px solid #f0f6f0;margin-bottom:8px;background:#fbfffb}
-.table{width:100%;border-collapse:collapse;margin-top:8px}
-.table th,.table td{padding:10px;border-bottom:1px solid #eef6ee;text-align:left}
-.right-panel .card{position:sticky;top:20px}
-.hidden{display:none}
-.footer-note{font-size:12px;color:var(--muted);margin-top:8px}
-
-/* dark mode */
-body.dark{
-  --bg:#0b1220; --panel:#071021; --muted:#9aa7b2; --accent:#1fb169; --accent-2:#16945a; --text:#e6f7ec;
-  background:linear-gradient(180deg,#071021,#081822);
-}
-.dark .card{box-shadow: 0 6px 20px rgba(0,0,0,0.6)}
-
-/* responsive */
-@media(max-width:980px){.grid{grid-template-columns:1fr}.right-panel .card{position:static}}
-</style>
-</head>
-<body>
-
-<!-- Topbar -->
-<div class="topbar">
-  <div class="brand">CvSU Org Hub — Batch Officers</div>
-  <div class="controls">
-    <button id="toggleTheme" class="btn btn-ghost">Toggle Theme</button>
-    <button id="topResetYear" class="btn btn-white hidden">Reset Year</button>
-    <button id="topLogout" class="btn btn-ghost hidden">Logout</button>
-  </div>
-</div>
-
-<div class="container">
-
-  <!-- AUTH CARDS: LOGIN (separate) and SIGNUP (separate) -->
-  <div id="authArea">
-
-    <!-- LOGIN CARD -->
-    <div id="loginCard" class="card">
-      <div class="header">
-        <div>
-          <h2 class="h1">Login</h2>
-          <div class="muted">If you already have an account — sign in here.</div>
-        </div>
-      </div>
-
-      <div class="inputs" style="margin-top:12px">
-        <label class="muted">Email</label>
-        <input id="loginEmail" type="email" placeholder="you@school.edu">
-        <label class="muted">Password</label>
-        <input id="loginPassword" type="password" placeholder="password">
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button id="loginBtn" class="btn" style="background:var(--accent);color:#fff;border-radius:8px">Login</button>
-          <button id="loginGoogleBtn" class="btn btn-ghost">Login with Google</button>
-        </div>
-        <div class="footer-note">Don't have an account? Use the Signup card to register.</div>
-      </div>
-    </div>
-
-    <!-- SIGNUP CARD -->
-    <div id="signupCard" class="card">
-      <div class="header"><div><h2 class="h1">Sign Up</h2><div class="muted">Create a new account. <span style="color:var(--accent)">(IF NOT OFFICER DO NOT SELECT)</span></div></div></div>
-
-      <div class="inputs" style="margin-top:12px">
-        <label class="muted">Email</label><input id="signupEmail" type="email" placeholder="you@school.edu">
-        <label class="muted">Password</label><input id="signupPassword" type="password" placeholder="password (min 6)">
-        <label class="muted">Confirm Password</label><input id="signupPassword2" type="password" placeholder="confirm password">
-        <label class="muted">Full name</label><input id="signupName" type="text" placeholder="Juan dela Cruz">
-        <div style="display:flex;gap:8px">
-          <div style="flex:1">
-            <label class="muted">Grade</label>
-            <select id="signupGrade"><option value="">Select grade</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
-          </div>
-          <div style="width:140px">
-            <label class="muted">Section</label>
-            <select id="signupSection"><option value="">Select</option><option value="A">A</option><option value="B">B</option></select>
-          </div>
-        </div>
-
-        <label class="muted">Select Officer Role (optional) <span style="color:var(--accent)">( IF NOT OFFICER DO NOT SELECT )</span></label>
-        <select id="signupRole">
-          <option value="None">None</option>
-          <option value="President">President</option>
-          <option value="VP">Vice President</option>
-          <option value="Secretary">Secretary</option>
-          <option value="Treasurer">Treasurer</option>
-          <option value="Auditor">Auditor</option>
-          <option value="PIO">PIO</option>
-        </select>
-
-        <div style="display:flex;gap:8px;margin-top:12px">
-          <button id="signupBtn" class="btn" style="background:var(--accent);color:#fff;border-radius:8px">Sign Up</button>
-          <button id="signupGoogleBtn" class="btn btn-ghost">Sign up with Google</button>
-        </div>
-      </div>
-    </div>
-
-  </div> <!-- authArea -->
-
-  <!-- APP AREA (hidden until login/profile complete) -->
-  <div id="appArea" class="hidden">
-
-    <!-- welcome + tabs -->
-    <div class="card header">
-      <div>
-        <h2 id="welcomeTitle" class="h1">Welcome</h2>
-        <div id="welcomeMeta" class="muted">Batch / Grade • Section • Role</div>
-      </div>
-      <div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <div id="userRoleBadge" class="muted" style="background:#eef9f0;padding:6px 10px;border-radius:8px"></div>
-        </div>
-        <div class="tabs" style="margin-top:10px" id="tabsContainer">
-          <button class="tab-btn active" data-tab="dashboardTab">Dashboard</button>
-          <button class="tab-btn" data-tab="officersTab">Officers</button>
-          <button class="tab-btn" data-tab="membersTab">Members</button>
-          <button class="tab-btn" data-tab="attendanceTab">Attendance</button>
-          <button class="tab-btn" data-tab="inventoryTab">Inventory</button>
-          <button class="tab-btn" data-tab="receiptsTab">Receipts</button>
-          <button class="tab-btn" data-tab="announcementsTab">Announcements</button>
-          <button class="tab-btn" data-tab="formsTab">Forms</button>
-          <button class="tab-btn" data-tab="settingsTab">Settings</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="grid">
-
-      <!-- LEFT: main content -->
-      <div>
-
-        <!-- Dashboard tab -->
-        <div id="dashboardTab" class="card">
-          <h3>Dashboard</h3>
-          <div class="muted">Quick overview for your batch & section.</div>
-          <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
-            <div class="card" style="flex:1;min-width:220px">
-              <strong id="statMembers">Members: 0</strong><div class="muted">Total in your Grade & Section</div>
-            </div>
-            <div class="card" style="flex:1;min-width:220px">
-              <strong id="statOfficers">Officers: 0</strong><div class="muted">Assigned officers</div>
-            </div>
-            <div class="card" style="flex:1;min-width:220px">
-              <strong id="statInventory">Inventory Items: 0</strong><div class="muted">Items assigned to your Grade/Section</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Officers tab -->
-        <div id="officersTab" class="card hidden">
-          <h3>Officers (Batch)</h3>
-          <div class="muted">Only one person per officer role. Assign or remove officers here.</div>
-
-          <div style="margin-top:12px">
-            <div id="officersList"></div>
-          </div>
-
-          <div style="margin-top:12px">
-            <label class="muted">Assign officer by user email</label>
-            <div style="display:flex;gap:8px">
-              <input id="assignEmail" class="inputs" placeholder="member@example.com">
-              <select id="assignRole">
-                <option value="">Select role</option>
-                <option value="President">President</option>
-                <option value="VP">Vice President</option>
-                <option value="Secretary">Secretary</option>
-                <option value="Treasurer">Treasurer</option>
-                <option value="Auditor">Auditor</option>
-                <option value="PIO">PIO</option>
-              </select>
-              <button id="assignBtn" class="btn" style="background:var(--accent);color:#fff">Assign</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Members tab -->
-        <div id="membersTab" class="card hidden">
-          <h3>Members</h3>
-          <div class="muted">Manual masterlist. Add or remove members for the batch.</div>
-
-          <div style="margin-top:12px">
-            <label class="muted">Add member</label>
-            <div style="display:flex;gap:8px">
-              <input id="memberName" placeholder="Full name">
-              <select id="memberGrade"><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
-              <select id="memberSection"><option value="A">A</option><option value="B">B</option></select>
-              <button id="addMemberBtn" class="btn" style="background:var(--accent);color:#fff">Add</button>
-            </div>
-          </div>
-
-          <div style="margin-top:12px">
-            <h4>Masterlist (this grade & section)</h4>
-            <div id="masterlistTable"></div>
-          </div>
-        </div>
-
-        <!-- Attendance -->
-        <div id="attendanceTab" class="card hidden">
-          <h3>Attendance</h3>
-          <div class="muted">Create an event and mark all members in grade+section as present (or mark individually - basic mode).</div>
-
-          <label class="muted">Event name</label>
-          <input id="attEvent" placeholder="Weekly meeting">
-          <div style="display:flex;gap:8px">
-            <select id="attGrade"><option value="">Grade (default: your grade)</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
-            <select id="attSection"><option value="">Section (default: your section)</option><option value="A">A</option><option value="B">B</option></select>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="attMarkAll" class="btn" style="background:var(--accent);color:#fff">Mark All Present</button>
-            <button id="attListBtn" class="btn btn-ghost">View Events</button>
-          </div>
-
-          <div style="margin-top:12px">
-            <h4>Events</h4>
-            <div id="attEventsList"></div>
-          </div>
-        </div>
-
-        <!-- Inventory -->
-        <div id="inventoryTab" class="card hidden">
-          <h3>Inventory</h3>
-          <div class="muted">Add items and optionally upload image.</div>
-
-          <label class="muted">Item name</label><input id="invItemName" placeholder="Projector cable">
-          <label class="muted">Quantity</label><input id="invItemQty" type="number" value="1">
-          <label class="muted">Location / Note</label><input id="invItemLoc" placeholder="Store room">
-          <label class="muted">Image (optional)</label><input id="invItemFile" type="file">
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <select id="invItemGrade"><option value="">Grade (all)</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
-            <select id="invItemSection"><option value="">Section (all)</option><option value="A">A</option><option value="B">B</option></select>
-            <button id="invAddBtn" class="btn" style="background:var(--accent);color:#fff">Add Item</button>
-          </div>
-
-          <div style="margin-top:12px">
-            <h4>Items</h4>
-            <div id="invItemsList"></div>
-          </div>
-        </div>
-
-        <!-- Receipts -->
-        <div id="receiptsTab" class="card hidden">
-          <h3>Receipts</h3>
-          <div class="muted">Upload receipts (Treasurer/President allowed).</div>
-          <label class="muted">File</label><input id="receiptFileInput" type="file">
-          <label class="muted">Amount</label><input id="receiptAmountInput" type="number" placeholder="0">
-          <label class="muted">Note</label><input id="receiptNoteInput" type="text" placeholder="Bought snacks for meeting">
-          <button id="receiptUploadBtn" class="btn" style="background:var(--accent);color:#fff;margin-top:8px">Upload</button>
-
-          <div style="margin-top:12px">
-            <h4>Recent receipts</h4>
-            <div id="receiptsList"></div>
-          </div>
-        </div>
-
-        <!-- Announcements -->
-        <div id="announcementsTab" class="card hidden">
-          <h3>Announcements</h3>
-          <label class="muted">Title</label><input id="annTitleInput" placeholder="Meeting">
-          <label class="muted">Message</label><textarea id="annMsgInput" rows="3" placeholder="Details..."></textarea>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <select id="annFilterGrade"><option value="">All Grades</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
-            <select id="annFilterSection"><option value="">All Sections</option><option value="A">A</option><option value="B">B</option></select>
-            <button id="annPostBtn" class="btn" style="background:var(--accent);color:#fff">Post</button>
-          </div>
-
-          <div style="margin-top:12px">
-            <h4>Announcements</h4>
-            <div id="announcementsList"></div>
-          </div>
-        </div>
-
-        <!-- Forms -->
-        <div id="formsTab" class="card hidden">
-          <h3>Forms & Templates</h3>
-          <label class="muted">Form name</label><input id="formNameInput" placeholder="Event proposal">
-          <label class="muted">Upload file</label><input id="formFileInput" type="file">
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <select id="formGradeFilter"><option value="">All Grades</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
-            <select id="formSectionFilter"><option value="">All Sections</option><option value="A">A</option><option value="B">B</option></select>
-            <button id="formUploadBtn" class="btn" style="background:var(--accent);color:#fff">Upload Form</button>
-          </div>
-
-          <div style="margin-top:12px">
-            <h4>Forms</h4>
-            <div id="formsListArea"></div>
-          </div>
-        </div>
-
-        <!-- Settings -->
-        <div id="settingsTab" class="card hidden">
-          <h3>Settings</h3>
-          <div class="muted">Administrative controls. Only for President / Secretary.</div>
-          <div style="margin-top:12px">
-            <button id="resetYearBtn" class="btn" style="background:#e85d5d;color:#fff">Reset Year (Permanent)</button>
-            <div class="footer-note">Resetting year will delete officers, members, inventory, attendance, receipts, forms, announcements. Auth users remain.</div>
-          </div>
-        </div>
-
-      </div> <!-- end left -->
-
-      <!-- RIGHT: quick panels -->
-      <div class="right-panel">
-
-        <div class="card">
-          <h4>Add member quickly</h4>
-          <label class="muted">Name</label><input id="quickAddName" placeholder="Full name">
-          <div style="display:flex;gap:8px">
-            <select id="quickAddGrade"><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select>
-            <select id="quickAddSection"><option value="A">A</option><option value="B">B</option></select>
-          </div>
-          <button id="quickAddBtn" class="btn" style="background:var(--accent);color:#fff;margin-top:8px">Add Member</button>
-        </div>
-
-        <div class="card">
-          <h4>Officers (current)</h4>
-          <div id="sideOfficersList"></div>
-        </div>
-
-        <div class="card">
-          <h4>Quick actions</h4>
-          <button id="exportMasterlist" class="btn btn-ghost">Export Masterlist CSV</button>
-          <div class="footer-note">CSV will download masterlist for your grade+section.</div>
-        </div>
-
-      </div>
-
-    </div> <!-- grid -->
-
-  </div> <!-- appArea -->
-
-</div> <!-- container -->
-
-<!-- Scripts -->
-<script type="module">
-/* ============================
-   FULL APP: Firebase + Supabase
-   ============================ */
-
-/* ---------- Config - replace only if you need to change projects ---------- */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
-import { getDatabase, ref, set, push, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-// Firebase config (you provided earlier)
-const firebaseConfig = {
-  apiKey: "AIzaSyAK_41CRZM1pt5zTNqMzy_WdrZu1g8fKks",
-  authDomain: "org-organizer.firebaseapp.com",
-  databaseURL: "https://org-organizer-default-rtdb.firebaseio.com",
-  projectId: "org-organizer",
-  storageBucket: "org-organizer.appspot.com",
-  messagingSenderId: "971435967798",
-  appId: "1:971435967798:web:969835f265d9ee4f879f97",
-  measurementId: "G-STG68DJDWF"
-};
-
-// Supabase config (you provided earlier)
-const SUPABASE_URL = "https://kidiqmlzfsdesqbdvnmk.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZGlxbWx6ZnNkZXNxYmR2bm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MTc2MjAsImV4cCI6MjA3OTE5MzYyMH0.BYxROMP08DTBrwPVEZzletG89yfFWixCPR9L0YG55e4";
-const BUCKET = "org-resources-files";
-
-/* ---------------- init services ---------------- */
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-const googleProvider = new GoogleAuthProvider();
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
-
-/* ---------------- utilities ---------------- */
-const $ = (id)=>document.getElementById(id);
-const saveLocal = (p)=>localStorage.setItem('orghub_profile', JSON.stringify(p));
-const loadLocal = ()=>{ try{return JSON.parse(localStorage.getItem('orghub_profile'));}catch(e){return null} };
-const clearLocal = ()=>localStorage.removeItem('orghub_profile');
-
-const show = (el)=>el.classList.remove('hidden');
-const hide = (el)=>el.classList.add('hidden');
-
-/* ---------------- elements ---------------- */
-const loginEmail = $('loginEmail'), loginPassword = $('loginPassword'), loginBtn = $('loginBtn'), loginGoogleBtn = $('loginGoogleBtn');
-const signupEmail = $('signupEmail'), signupPassword = $('signupPassword'), signupPassword2 = $('signupPassword2'), signupName = $('signupName'), signupGrade = $('signupGrade'), signupSection = $('signupSection'), signupRole = $('signupRole'), signupBtn = $('signupBtn'), signupGoogleBtn = $('signupGoogleBtn');
-const authArea = $('authArea'), appArea = $('appArea'), topLogout = $('topLogout'), topResetYear = $('topResetYear');
-const welcomeTitle = $('welcomeTitle'), welcomeMeta = $('welcomeMeta'), userRoleBadge = $('userRoleBadge');
-const tabs = document.querySelectorAll('#tabsContainer .tab-btn');
-const toggleTheme = $('toggleTheme');
-const topResetBtn = $('topResetYear');
-const resetYearBtn = $('resetYearBtn'), btnResetYear = $('btnResetYear');
-
-/* tab elements map */
-const tabIds = ['dashboardTab','officersTab','membersTab','attendanceTab','inventoryTab','receiptsTab','announcementsTab','formsTab','settingsTab'];
-const tabEls = {}; tabIds.forEach(id=>tabEls[id] = $(id));
-
-/* officers & members UI */
-const officersList = $('officersList'), sideOfficersList = $('sideOfficersList');
-const assignEmail = $('assignEmail'), assignRole = $('assignRole'), assignBtn = $('assignBtn');
-const memberName = $('memberName'), memberGrade = $('memberGrade'), memberSection = $('memberSection'), addMemberBtn = $('addMemberBtn'), masterlistTable = $('masterlistTable');
-const quickAddName = $('quickAddName'), quickAddGrade = $('quickAddGrade'), quickAddSection = $('quickAddSection'), quickAddBtn = $('quickAddBtn');
-const statMembers = $('statMembers'), statOfficers = $('statOfficers'), statInventory = $('statInventory');
-
-/* attendance */
-const attEvent = $('attEvent'), attGrade = $('attGrade'), attSection = $('attSection'), attMarkAll = $('attMarkAll'), attListBtn = $('attListBtn'), attEventsList = $('attEventsList');
-
-/* inventory */
-const invItemName = $('invItemName'), invItemQty = $('invItemQty'), invItemLoc = $('invItemLoc'), invItemFile = $('invItemFile'), invItemGrade = $('invItemGrade'), invItemSection = $('invItemSection'), invAddBtn = $('invAddBtn'), invItemsList = $('invItemsList');
-
-/* receipts */
-const receiptFileInput = $('receiptFileInput'), receiptAmountInput = $('receiptAmountInput'), receiptNoteInput = $('receiptNoteInput'), receiptUploadBtn = $('receiptUploadBtn'), receiptsList = $('receiptsList');
-
-/* announcements */
-const annTitleInput = $('annTitleInput'), annMsgInput = $('annMsgInput'), annFilterGrade = $('annFilterGrade'), annFilterSection = $('annFilterSection'), annPostBtn = $('annPostBtn'), announcementsList = $('announcementsList');
-
-/* forms */
-const formNameInput = $('formNameInput'), formFileInput = $('formFileInput'), formGradeFilter = $('formGradeFilter'), formSectionFilter = $('formSectionFilter'), formUploadBtn = $('formUploadBtn'), formsListArea = $('formsListArea');
-
-/* exports */
-const exportMasterlist = $('exportMasterlist');
-
-/* theme */
-let darkMode = false;
-toggleTheme.addEventListener('click', ()=>{
-  darkMode = !darkMode;
-  document.body.classList.toggle('dark', darkMode);
-});
-
-/* tab switching */
-tabs.forEach(b=>b.addEventListener('click', ()=>{
-  tabs.forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');
-  const t = b.dataset.tab;
-  tabIds.forEach(id=>hide($(id)));
-  show($(t));
-}));
-
-/* show/hide helpers for auth/dashboard */
-function showAuth(){ show($('authArea')); hide(appArea); hide(topLogout); hide(topResetYear); }
-function showApp(){ hide($('authArea')); show(appArea); show(topLogout); show(topResetYear); }
-
-/* roles list that are considered officers */
-const OFFICER_ROLES = ['President','VP','Secretary','Treasurer','Auditor','PIO'];
-
-/* ---------- helper: check officer taken ---------- */
-async function isOfficerTaken(role){
-  if(!role || role==='None') return false;
-  const snap = await get(ref(db, `officers/${role}`));
-  return snap.exists();
-}
-
-/* ---------- helper: save profile to DB & local ---------- */
-async function saveUserProfile(uid, profile){
-  // profile: { uid, email, name, grade, section, role }
-  await set(ref(db, `users/${uid}`), profile);
-  // add to members list if not officer-only (we still add everyone to members)
-  await push(ref(db,'members'), { uid: profile.uid, name: profile.name, email: profile.email || '', grade: profile.grade, section: profile.section });
-  saveLocal(profile);
-}
-
-/* ---------- Signup (email) ---------- */
-signupBtn.addEventListener('click', async ()=>{
-  const email = signupEmail.value.trim();
-  const pass = signupPassword.value;
-  const pass2 = signupPassword2.value;
-  const name = signupName.value.trim();
-  const grade = signupGrade.value;
-  const section = signupSection.value;
-  const role = signupRole.value || 'None';
-
-  if(!email||!pass||!pass2||!name||!grade||!section) return alert('Fill all required fields.');
-  if(pass !== pass2) return alert('Passwords do not match.');
-  if(role !== 'None'){
-    const taken = await isOfficerTaken(role);
-    if(taken) return alert('This officer role is already filled. Choose another or contact current officer.');
-  }
-
-  try{
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    const uid = cred.user.uid;
-    const profile = { uid, email, name, grade, section, role: (role==='None' ? 'user' : role), createdAt: Date.now() };
-
-    // If officer role chosen, set officers/{role}
-    if(role !== 'None'){
-      await set(ref(db, `officers/${role}`), { uid, name, email, assignedAt: Date.now() });
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVSU Batch Officers Portal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    await saveUserProfile(uid, profile);
-    afterLogin(profile);
-  }catch(err){
-    console.error(err);
-    alert('Signup error: '+(err.message||err));
-  }
-});
 
-/* ---------- Login (email) ---------- */
-loginBtn.addEventListener('click', async ()=>{
-  const email = loginEmail.value.trim();
-  const pass = loginPassword.value;
-  if(!email||!pass) return alert('Enter email & password');
-  try{
-    const cred = await signInWithEmailAndPassword(auth, email, pass);
-    const uid = cred.user.uid;
-    const snap = await get(ref(db, `users/${uid}`));
-    const profile = snap.exists()? snap.val() : null;
-    if(!profile) return alert('Profile not completed. Please signup or contact admin.');
-    afterLogin(profile);
-  }catch(err){
-    console.error(err);
-    alert('Login failed: '+(err.message||err));
-  }
-});
-
-/* ---------- Google Signup/Login (two-step complete-profile flow) ---------- */
-signupGoogleBtn.addEventListener('click', googleFlow);
-loginGoogleBtn.addEventListener('click', async ()=>{
-  // For login via Google: sign-in then check if profile exists; if not, force complete-profile
-  try{
-    const res = await signInWithPopup(auth, googleProvider);
-    const guser = res.user;
-    const snap = await get(ref(db, `users/${guser.uid}`));
-    if(snap.exists()){
-      // profile exists -> login
-      afterLogin(snap.val());
-    } else {
-      // profile missing -> force complete profile using two-step UI
-      // we reuse signup card fields to complete profile
-      signupEmail.value = guser.email || '';
-      signupName.value = guser.displayName || '';
-      // tell user to complete grade/section/role and click Sign Up (this will set using the same handler)
-      alert('Complete your profile (grade, section, and role selection) on the Sign Up card, then click Sign Up to finish.');
-      // Focus the signup card
-      window.scrollTo({top:0,behavior:'smooth'});
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100%;
+      color: #333;
     }
-  }catch(err){
-    console.error(err); alert('Google login error: '+(err.message||err));
-  }
-});
-async function googleFlow(){
-  // starts Google and then forces complete profile flow (signup card)
-  try{
-    const res = await signInWithPopup(auth, googleProvider);
-    const guser = res.user;
-    // prefill signup fields
-    signupEmail.value = guser.email || '';
-    signupName.value = guser.displayName || '';
-    // show note: complete profile and press Sign Up
-    alert('You signed in with Google. Complete Grade / Section and pick a role (or None) on the Sign Up card, then click Sign Up to finish account creation.');
-    window.scrollTo({top:0,behavior:'smooth'});
-  }catch(err){ console.error(err); alert('Google error: '+(err.message||err)); }
-}
 
-/* ---------- after login UI ---------- */
-function afterLogin(profile){
-  // profile = { uid, email, name, grade, section, role }
-  saveLocal(profile);
-  hide($('authArea')); show(appArea);
-  show(topLogout); show(topResetYear);
-  welcomeTitle.textContent = `Hello, ${profile.name || profile.email}`;
-  welcomeMeta.textContent = `Grade ${profile.grade} • Section ${profile.section} • ${profile.role}`;
-  userRoleBadge.textContent = profile.role;
-  // show/hide reset top button for President
-  if(profile.role === 'President'){ show(topResetYear); show(resetYearBtn); } else { hide(topResetYear); hide(resetYearBtn); }
+    html, body {
+      height: 100%;
+    }
 
-  // load realtime data watchers (only once)
-  initRealtime(profile);
-}
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-/* ---------- initRealtime: watchers for lists ---------- */
-let realtimeInitialized = false;
-function initRealtime(profile){
-  if(realtimeInitialized) return; realtimeInitialized = true;
+    /* Auth Screen */
+    .auth-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-  // officers list
-  onValue(ref(db,'officers'), snap=>{
-    const data = snap.val()||{};
-    officersList.innerHTML = '';
-    sideOfficersList.innerHTML = '';
-    let count = 0;
-    Object.entries(data).forEach(([role,obj])=>{
-      count++;
-      const html = `<div class="list-item"><strong>${role}</strong><div class="muted">${obj.name || obj.email || obj.uid}</div><div style="margin-top:8px"><button data-role="${role}" class="btn btn-ghost removeOfficer">Remove</button></div></div>`;
-      officersList.insertAdjacentHTML('beforeend', html);
-      const small = `<div class="list-item"><strong>${role}</strong><div class="muted">${obj.name||obj.email||''}</div></div>`;
-      sideOfficersList.insertAdjacentHTML('beforeend', small);
-    });
-    statOfficers.textContent = `Officers: ${count}`;
-    // attach remove handlers
-    document.querySelectorAll('.removeOfficer').forEach(b=>{
-      b.onclick = async (e)=>{
-        const role = e.target.dataset.role;
-        if(!confirm(`Remove ${role}?`)) return;
-        await remove(ref(db, `officers/${role}`));
-        alert(`${role} removed`);
-      };
-    });
-  });
+    .auth-card {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 450px;
+    }
 
-  // members list (masterlist)
-  onValue(ref(db,'members'), snap=>{
-    const data = snap.val()||{};
-    // update counters and masterlist table filtered by current user's grade & section stored in local
-    const profileLocal = loadLocal();
-    const membersRows = [];
-    let count = 0;
-    Object.entries(data).forEach(([k,m])=>{
-      if(m.grade == profileLocal.grade && m.section == profileLocal.section){
-        count++;
-        membersRows.push(`<tr><td>${m.name}</td><td>${m.email||''}</td><td>${m.grade}</td><td>${m.section}</td><td><button class="btn btn-ghost removeMember" data-key="${k}">Remove</button></td></tr>`);
+    .auth-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .auth-header h1 {
+      color: #667eea;
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .auth-header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .auth-tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-group small {
+      display: block;
+      margin-top: 6px;
+      color: #666;
+      font-size: 12px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 12px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #f8f9ff;
+    }
+
+    .btn-google {
+      background: white;
+      color: #333;
+      border: 2px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-google:hover {
+      background: #f8f9ff;
+      border-color: #667eea;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 20px 0;
+      color: #999;
+      font-size: 14px;
+      position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 45%;
+      height: 1px;
+      background: #e0e0e0;
+    }
+
+    .divider::before {
+      left: 0;
+    }
+
+    .divider::after {
+      right: 0;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .alert-error {
+      background: #fee;
+      color: #c33;
+      border: 1px solid #fcc;
+    }
+
+    .alert-success {
+      background: #efe;
+      color: #3c3;
+      border: 1px solid #cfc;
+    }
+
+    .alert-info {
+      background: #eef;
+      color: #33c;
+      border: 1px solid #ccf;
+    }
+
+    .alert-warning {
+      background: #ffe;
+      color: #c93;
+      border: 1px solid #ffc;
+    }
+
+    /* App Screen */
+    .app-screen {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .app-screen.active {
+      display: block;
+    }
+
+    .app-header {
+      background: white;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      border-radius: 12px;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header-left h1 {
+      color: #667eea;
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .header-left p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-info {
+      text-align: right;
+    }
+
+    .user-info .user-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .user-info .user-role {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+
+    .role-president { background: #ffd700; color: #333; }
+    .role-vp { background: #c0c0c0; color: #333; }
+    .role-secretary { background: #87ceeb; color: #333; }
+    .role-treasurer { background: #98fb98; color: #333; }
+    .role-auditor { background: #dda0dd; color: #333; }
+    .role-pio { background: #ffa07a; color: #333; }
+    .role-sgt { background: #f0e68c; color: #333; }
+    .role-member { background: #d3d3d3; color: #333; }
+
+    .btn-logout {
+      padding: 10px 20px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: #d32f2f;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: white;
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: #666;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      background: #f8f9ff;
+      color: #667eea;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .card-header h2 {
+      color: #333;
+      font-size: 22px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-small:hover {
+      background: #5568d3;
+    }
+
+    .btn-small.btn-danger {
+      background: #f44336;
+    }
+
+    .btn-small.btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    .btn-small.btn-success {
+      background: #4caf50;
+    }
+
+    .btn-small.btn-success:hover {
+      background: #45a049;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .stat-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .stat-card .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    table th,
+    table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    table th {
+      background: #f8f9ff;
+      color: #667eea;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    table td {
+      font-size: 14px;
+      color: #333;
+    }
+
+    table tr:hover {
+      background: #fafafa;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state svg {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #666;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .modal-header h2 {
+      color: #333;
+      font-size: 24px;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #999;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.3s;
+    }
+
+    .btn-close:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .file-upload {
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-upload:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .file-upload input[type="file"] {
+      display: none;
+    }
+
+    .file-list {
+      margin-top: 20px;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: #f8f9ff;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .file-item-name {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .file-item-meta {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .auth-card {
+        padding: 30px 20px;
       }
-    });
-    statMembers.textContent = `Members: ${count}`;
-    masterlistTable.innerHTML = `<table class="table"><thead><tr><th>Name</th><th>Email</th><th>Grade</th><th>Section</th><th></th></tr></thead><tbody>${membersRows.join('')||'<tr><td colspan="5" class="muted">No members</td></tr>'}</tbody></table>`;
-    document.querySelectorAll('.removeMember').forEach(b=>b.onclick=async (e)=>{
-      const key = e.target.dataset.key;
-      if(!confirm('Remove member?')) return;
-      await remove(ref(db, `members/${key}`));
-    });
-  });
 
-  // inventory list
-  onValue(ref(db,'inventory'), snap=>{
-    const data = snap.val()||{};
-    const profileLocal = loadLocal();
-    const itemsHtml = [];
-    let count = 0;
-    Object.entries(data).forEach(([k,i])=>{
-      // filter by grade/section: if item specifies grade/section only then show if matches; empty means global
-      if(i.grade && i.grade != profileLocal.grade) return;
-      if(i.section && i.section != profileLocal.section) return;
-      count++;
-      itemsHtml.push(`<div class="list-item"><strong>${i.name}</strong><div class="muted">Qty: ${i.qty} • ${i.loc||''}</div>${i.url?`<div style="margin-top:8px"><img src="${i.url}" style="max-width:100%;border-radius:8px"></div>`:''}</div>`);
-    });
-    invItemsList.innerHTML = itemsHtml.join('') || '<div class="muted">No inventory</div>';
-    statInventory.textContent = `Inventory Items: ${count}`;
-  });
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
 
-  // receipts
-  onValue(ref(db,'receipts'), snap=>{
-    const data = snap.val()||{};
-    const profileLocal = loadLocal();
-    const html = [];
-    Object.entries(data).sort((a,b)=>b[1].date - a[1].date).forEach(([k,r])=>{
-      if(r.grade && r.grade != profileLocal.grade) return;
-      if(r.section && r.section != profileLocal.section) return;
-      html.push(`<div class="list-item"><strong>₱${r.amount}</strong> <div class="muted">${r.note||''}</div><div style="margin-top:8px"><a href="${r.url}" target="_blank">View</a></div></div>`);
-    });
-    receiptsList.innerHTML = html.join('') || '<div class="muted">No receipts</div>';
-  });
+      .tabs-nav {
+        overflow-x: auto;
+      }
 
-  // announcements
-  onValue(ref(db,'announcements'), snap=>{
-    const data = snap.val()||{};
-    const profileLocal = loadLocal();
-    const html = [];
-    Object.entries(data).sort((a,b)=>b[1].date - a[1].date).forEach(([k,a])=>{
-      // filter
-      if(a.grade && a.grade != profileLocal.grade) return;
-      if(a.section && a.section != profileLocal.section) return;
-      html.push(`<div class="list-item"><strong>${a.title}</strong><div class="muted">${new Date(a.date).toLocaleString()}</div><div style="margin-top:8px">${a.msg}</div></div>`);
-    });
-    announcementsList.innerHTML = html.join('') || '<div class="muted">No announcements</div>';
-  });
+      .form-row {
+        grid-template-columns: 1fr;
+      }
 
-  // forms
-  onValue(ref(db,'forms'), snap=>{
-    const data = snap.val()||{};
-    const profileLocal = loadLocal();
-    const html = [];
-    Object.entries(data).sort((a,b)=>b[1].date - a[1].date).forEach(([k,f])=>{
-      if(f.grade && f.grade != profileLocal.grade) return;
-      if(f.section && f.section != profileLocal.section) return;
-      html.push(`<div class="list-item"><strong>${f.name}</strong><div style="margin-top:8px"><a href="${f.url}" target="_blank">Download</a></div></div>`);
-    });
-    formsListArea.innerHTML = html.join('') || '<div class="muted">No forms</div>';
-  });
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
 
-  // attendance events listing
-  onValue(ref(db,'attendance'), snap=>{
-    const data = snap.val()||{};
-    const html = [];
-    Object.entries(data).forEach(([event, attendees])=>{
-      const meta = attendees.__meta || {};
-      const count = Object.keys(attendees).filter(k=>k!=="__meta").length;
-      html.push(`<div class="list-item"><strong>${event}</strong><div class="muted">Total present: ${count} • ${meta.grade||'all'} ${meta.section||''}</div></div>`);
-    });
-    attEventsList.innerHTML = html.join('') || '<div class="muted">No events</div>';
-  });
-
-} // end initRealtime
-
-/* ---------- actions: assign officer ---------- */
-assignBtn.addEventListener('click', async ()=>{
-  const email = assignEmail.value.trim();
-  const role = assignRole.value;
-  if(!email||!role) return alert('Provide email and role');
-  // check taken
-  const taken = await isOfficerTaken(role);
-  if(taken) return alert('Role already taken');
-  // find user by email in users list
-  const usersSnap = await get(ref(db,'users'));
-  const users = usersSnap.val()||{};
-  let found = null;
-  Object.entries(users).forEach(([k,u])=>{ if(u.email && u.email.toLowerCase()===email.toLowerCase()) found = u; });
-  if(!found) return alert('User not found. The user must have an account first.');
-  await set(ref(db, `officers/${role}`), { uid: found.uid, name: found.name||found.email, email: found.email, assignedAt: Date.now() });
-  // update user's role in users/{uid}
-  await update(ref(db, `users/${found.uid}`), { role });
-  assignEmail.value=''; assignRole.value='';
-  alert('Officer assigned');
-});
-
-/* ---------- add member ---------- */
-addMemberBtn.addEventListener('click', async ()=>{
-  const name = memberName.value.trim();
-  const grade = memberGrade.value;
-  const section = memberSection.value;
-  if(!name||!grade||!section) return alert('Fill name/grade/section');
-  await push(ref(db,'members'), { name, grade, section, email:'' });
-  memberName.value=''; alert('Member added');
-});
-
-/* quick add */
-quickAddBtn.addEventListener('click', async ()=>{
-  const name = quickAddName.value.trim();
-  const grade = quickAddGrade.value;
-  const section = quickAddSection.value;
-  if(!name) return alert('Name required');
-  await push(ref(db,'members'), { name, grade, section, email:'' });
-  quickAddName.value=''; alert('Member added');
-});
-
-/* ---------- mark attendance (auto mark all) ---------- */
-attMarkAll.addEventListener('click', async ()=>{
-  const profile = loadLocal(); if(!profile) return alert('Login');
-  if(!attEvent.value.trim()) return alert('Event name required');
-  // permission: Secretary or President
-  if(!['Secretary','President','VP'].includes(profile.role) && profile.role !== 'Secretary' && profile.role !== 'President' && profile.role !== 'VP') {
-    // allow Secretary, VP, President
-    // else deny
-    // But members can view only
-    if(!confirm('You might not have permission to mark attendance. Proceed?')) return;
-  }
-  const grade = attGrade.value || profile.grade;
-  const section = attSection.value || profile.section;
-  const membersSnap = await get(ref(db,'members'));
-  const members = membersSnap.val()||{};
-  const updates = {};
-  Object.entries(members).forEach(([k,m])=>{
-    if(String(m.grade)===String(grade) && m.section === section){
-      updates[`attendance/${attEvent.value}/${m.uid || ('m'+k)}`] = 'present';
+      .card {
+        padding: 16px;
+      }
     }
-  });
-  updates[`attendance/${attEvent.value}/__meta`] = { grade, section, createdBy: profile.uid, date: Date.now() };
-  await update(ref(db,'/'), updates);
-  attEvent.value=''; alert('Marked attendance for event');
-});
 
-/* ---------- inventory add ---------- */
-invAddBtn.addEventListener('click', async ()=>{
-  const profile = loadLocal(); if(!profile) return alert('Login');
-  if(!invItemName.value.trim()) return alert('Item name required');
-  // permission: Treasurer or President or VP
-  if(!['Treasurer','President','VP'].includes(profile.role) && profile.role !== 'Treasurer' && profile.role !== 'President' && profile.role !== 'VP') {
-    if(!confirm('You may not have permission to add inventory. Proceed?')) return;
-  }
-  const name = invItemName.value.trim();
-  const qty = Number(invItemQty.value) || 1;
-  const loc = invItemLoc.value.trim();
-  const grade = invItemGrade.value || '';
-  const section = invItemSection.value || '';
-  const file = invItemFile.files[0];
-  let url = '';
-  try{
-    if(file){
-      const path = `inventory/${Date.now()}-${file.name}`;
-      const r = await supabase.storage.from(BUCKET).upload(path, file);
-      if(r.error) throw r.error;
-      url = (await supabase.storage.from(BUCKET).getPublicUrl(path)).data.publicUrl;
+    .action-buttons {
+      display: flex;
+      gap: 8px;
     }
-    await push(ref(db,'inventory'), { name, qty, loc, url, grade, section, addedBy: profile.uid, date: Date.now() });
-    invItemName.value=''; invItemQty.value=1; invItemLoc.value=''; invItemFile.value='';
-    alert('Inventory added');
-  }catch(err){ console.error(err); alert('Inventory upload failed: '+(err.message||err)); }
-});
 
-/* ---------- receipts upload ---------- */
-receiptUploadBtn.addEventListener('click', async ()=>{
-  const profile = loadLocal(); if(!profile) return alert('Login');
-  // only Treasurer, President allowed
-  if(!['Treasurer','President'].includes(profile.role)) return alert('Only Treasurer or President can upload receipts.');
-  const file = receiptFileInput.files[0];
-  if(!file) return alert('Choose file');
-  const amount = Number(receiptAmountInput.value)||0;
-  const note = receiptNoteInput.value || '';
-  try{
-    const path = `receipts/${Date.now()}-${file.name}`;
-    const res = await supabase.storage.from(BUCKET).upload(path, file);
-    if(res.error) throw res.error;
-    const url = (await supabase.storage.from(BUCKET).getPublicUrl(path)).data.publicUrl;
-    await push(ref(db,'receipts'), { url, amount, note, uploadedBy: profile.uid, grade: profile.grade, section: profile.section, date: Date.now() });
-    receiptFileInput.value=''; receiptAmountInput.value=''; receiptNoteInput.value='';
-    alert('Receipt uploaded');
-  }catch(err){ console.error(err); alert('Upload failed: '+(err.message||err)); }
-});
+    .btn-icon {
+      padding: 6px 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
 
-/* ---------- announcements ---------- */
-annPostBtn.addEventListener('click', async ()=>{
-  const profile = loadLocal(); if(!profile) return alert('Login');
-  if(!['President','VP','PIO','Secretary'].includes(profile.role) && profile.role !== 'President' && profile.role !== 'VP' && profile.role !== 'Secretary' && profile.role !== 'PIO') {
-    if(!confirm('You may not have permission to post announcements. Continue?')) return;
-  }
-  const title = annTitleInput.value.trim(), msg = annMsgInput.value.trim();
-  const grade = annFilterGrade.value || '', section = annFilterSection.value || '';
-  if(!title||!msg) return alert('Fill title & message');
-  await push(ref(db,'announcements'), { title, msg, grade, section, postedBy: profile.uid, date: Date.now() });
-  annTitleInput.value=''; annMsgInput.value='';
-  alert('Announcement posted');
-});
+    .btn-icon:hover {
+      background: #5568d3;
+    }
 
-/* ---------- forms upload ---------- */
-formUploadBtn.addEventListener('click', async ()=>{
-  const profile = loadLocal(); if(!profile) return alert('Login');
-  if(!['President','Secretary','VP'].includes(profile.role)) return alert('Only President/Secretary/VP can upload forms');
-  const file = formFileInput.files[0]; const name = formNameInput.value.trim();
-  if(!file||!name) return alert('Form name & file required');
-  try{
-    const path = `forms/${Date.now()}-${file.name}`;
-    const r = await supabase.storage.from(BUCKET).upload(path, file);
-    if(r.error) throw r.error;
-    const url = (await supabase.storage.from(BUCKET).getPublicUrl(path)).data.publicUrl;
-    await push(ref(db,'forms'), { name, url, grade: formGradeFilter.value||'', section: formSectionFilter.value||'', uploadedBy: profile.uid, date: Date.now() });
-    formNameInput.value=''; formFileInput.value='';
-    alert('Form uploaded');
-  }catch(e){ console.error(e); alert('Form upload failed'); }
-});
+    .btn-icon.btn-danger {
+      background: #f44336;
+    }
 
-/* ---------- assign officer by email (UI also) ---------- */
-/* Done above in assignBtn handler via assignBtn listener */
+    .btn-icon.btn-danger:hover {
+      background: #d32f2f;
+    }
 
-/* ---------- export masterlist CSV (for current grade/section) ---------- */
-exportMasterlist.addEventListener('click', async ()=>{
-  const profile = loadLocal(); if(!profile) return alert('Login');
-  const snap = await get(ref(db,'members'));
-  const rows = [['name','email','grade','section']];
-  const data = snap.val()||{};
-  Object.values(data).forEach(m=>{
-    if(m.grade==profile.grade && m.section==profile.section) rows.push([m.name||'', m.email||'', m.grade||'', m.section||'']);
-  });
-  if(rows.length<=1) return alert('No members to export');
-  const csv = rows.map(r=>r.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = `masterlist_g${loadLocal().grade}_s${loadLocal().section}.csv`; a.click();
-  URL.revokeObjectURL(url);
-});
+    .attendance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+    }
 
-/* ---------- reset year (dangerous) ---------- */
-resetYearBtn.addEventListener('click', async ()=>{
-  const profile = loadLocal(); if(!profile) return alert('Login');
-  if(profile.role !== 'President') return alert('Only President can reset year');
-  if(!confirm('Reset year will DELETE officers, members, inventory, attendance, receipts, forms, announcements. This is permanent. Continue?')) return;
-  const paths = ['officers','members','inventory','attendance','receipts','forms','announcements','budget'];
-  const updates = {};
-  paths.forEach(p=>updates[p]=null);
-  await update(ref(db,'/'), updates);
-  alert('Year reset complete');
-});
+    .attendance-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 16px;
+      transition: all 0.3s;
+    }
 
-/* ---------- logout top ---------- */
-topLogout.addEventListener('click', async ()=>{
-  await signOut(auth);
-  clearLocal();
-  location.reload();
-});
+    .attendance-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
 
-/* ---------- startup: check local profile ---------- */
-(function startup(){
-  const profile = loadLocal();
-  if(profile){
-    // verify exists in DB (best-effort)
-    get(ref(db, `users/${profile.uid}`)).then(s=>{
-      if(s.exists()){
-        afterLogin(profile);
+    .attendance-card.present {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .attendance-card h4 {
+      margin-bottom: 8px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .attendance-card p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+
+    .ledger-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-left: 4px solid #667eea;
+      background: #f8f9ff;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .ledger-entry.income {
+      border-left-color: #4caf50;
+      background: #e8f5e9;
+    }
+
+    .ledger-entry.expense {
+      border-left-color: #f44336;
+      background: #ffebee;
+    }
+
+    .ledger-entry-left h4 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .ledger-entry-left p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .ledger-entry-right {
+      text-align: right;
+    }
+
+    .ledger-amount {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .ledger-amount.income {
+      color: #4caf50;
+    }
+
+    .ledger-amount.expense {
+      color: #f44336;
+    }
+
+    .ledger-date {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .announcement-item {
+      border-left: 4px solid #667eea;
+      padding: 16px;
+      background: #f8f9ff;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .announcement-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .announcement-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .announcement-meta {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .announcement-content {
+      color: #333;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .approval-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.3s;
+    }
+
+    .approval-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    }
+
+    .approval-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .approval-info h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .approval-info p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .approval-note {
+      background: #fffbea;
+      border-left: 4px solid #ffc107;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .approval-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .log-entry {
+      padding: 16px;
+      border-left: 4px solid #667eea;
+      background: #f8f9ff;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .log-action {
+      font-weight: 700;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .log-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .log-details {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .search-bar {
+      margin-bottom: 20px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      color: #666;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .filter-btn.active {
+      background: #667eea;
+      border-color: #667eea;
+      color: white;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Auth Screen -->
+  <div class="auth-screen" id="authScreen">
+   <div class="auth-card">
+    <div class="auth-header">
+     <h1>CVSU Portal</h1>
+     <p>Batch Officers Management System</p>
+    </div>
+    <div id="authAlert"></div>
+    <div class="auth-tabs"><button class="auth-tab active" onclick="switchAuthTab('signin')">Sign In</button> <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+    </div><!-- Sign In Form -->
+    <form id="signinForm" class="auth-form active" onsubmit="handleSignIn(event)">
+     <div class="form-group"><label for="signinEmail">Email Address</label> <input type="email" id="signinEmail" required>
+     </div>
+     <div class="form-group"><label for="signinPassword">Password</label> <input type="password" id="signinPassword" required>
+     </div><button type="submit" class="btn" id="signinBtn">Sign In</button>
+     <div class="divider">
+      OR
+     </div><button type="button" class="btn btn-google" onclick="handleGoogleSignIn()"> <span>🔐</span> Continue with Google </button>
+    </form><!-- Sign Up Form -->
+    <form id="signupForm" class="auth-form" onsubmit="handleSignUp(event)">
+     <div class="form-group"><label for="signupName">Full Name</label> <input type="text" id="signupName" required>
+     </div>
+     <div class="form-group"><label for="signupEmail">Email Address</label> <input type="email" id="signupEmail" required>
+     </div>
+     <div class="form-group"><label for="signupPhone">Phone Number (optional)</label> <input type="tel" id="signupPhone" placeholder="+63 XXX XXX XXXX">
+     </div>
+     <div class="form-group"><label for="signupPassword">Password</label> <input type="password" id="signupPassword" required minlength="6">
+     </div>
+     <div class="form-group"><label for="signupRole">Select Role</label> <select id="signupRole" required> <option value="">Choose a role...</option> <option value="President">President</option> <option value="VP">Vice President</option> <option value="Secretary">Secretary</option> <option value="Treasurer">Treasurer</option> <option value="Auditor">Auditor</option> <option value="PIO">Public Information Officer</option> <option value="Sgt. at Arms">Sergeant at Arms</option> <option value="Member">Member</option> </select> <small>If a position is already filled, you won't be able to take it</small>
+     </div><button type="submit" class="btn" id="signupBtn">Create Account</button>
+    </form>
+   </div>
+  </div><!-- App Screen -->
+  <div class="app-screen" id="appScreen">
+   <div class="container"><!-- Header -->
+    <div class="app-header">
+     <div class="header-content">
+      <div class="header-left">
+       <h1>CVSU Batch Portal</h1>
+       <p>Officers Management System</p>
+      </div>
+      <div class="header-right">
+       <div class="user-info">
+        <div class="user-name" id="userName">
+         Loading...
+        </div>
+        <div class="user-role"><span id="userRole">Member</span>
+        </div>
+       </div><button class="btn-logout" onclick="handleLogout()">Logout</button>
+      </div>
+     </div>
+    </div><!-- Tabs Navigation -->
+    <div class="tabs-nav" id="tabsNav"><!-- Tabs will be dynamically generated -->
+    </div><!-- Tab Contents -->
+    <div id="tabContents"><!-- Content will be dynamically generated -->
+    </div>
+   </div>
+  </div><!-- Modals will be added dynamically -->
+  <div id="modalContainer"></div><!-- Loading Overlay -->
+  <div class="loading" id="loadingOverlay">
+   <div class="spinner"></div>
+   <p>Loading...</p>
+  </div><!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script><!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Configuration
+    const CONFIG = {
+      ORG_ID: 'cvsu-batch',
+      ORG_NAME: 'CVSU',
+      FIREBASE: {
+        apiKey: "AIzaSyAK_41CRZM1pt5zTNqMzy_WdrZu1g8fKks",
+        authDomain: "org-organizer.firebaseapp.com",
+        databaseURL: "https://org-organizer-default-rtdb.firebaseio.com",
+        projectId: "org-organizer",
+        storageBucket: "org-organizer.firebasestorage.app",
+        messagingSenderId: "971435967798",
+        appId: "1:971435967798:web:969835f265d9ee4f879f97",
+        measurementId: "G-STG68DJDWF"
+      },
+      SUPABASE: {
+        URL: 'https://kidiqmlzfsdesqbdvnmk.supabase.co',
+        ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtpZGlxbWx6ZnNkZXNxYmR2bm1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM2MTc2MjAsImV4cCI6MjA3OTE5MzYyMH0.BYxROMP08DTBrwPVEZzletG89yfFWixCPR9L0YG55e4',
+        BUCKET: 'org-resources-files'
+      },
+      DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1330706822034378292/20zggT_tEPEIZ6lYF52-wRaB6eAUOHCirNebJEoU2Hj7eytnDo9ZaxSlMVgzPQpQql18"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(CONFIG.FIREBASE);
+    const auth = firebase.auth();
+    const database = firebase.database();
+    
+    // Enable authentication persistence
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+    // Initialize Supabase
+    const { createClient } = supabase;
+    const supabaseClient = createClient(CONFIG.SUPABASE.URL, CONFIG.SUPABASE.ANON_KEY);
+
+    // Global state
+    let currentUser = null;
+    let currentUserData = null;
+    let allUsers = [];
+    let allEvents = [];
+    let allFiles = [];
+    let allAnnouncements = [];
+    let allFinanceRecords = [];
+    let allAuditLogs = [];
+
+    // Role permissions
+    const ROLE_PERMISSIONS = {
+      'President': ['all'],
+      'VP': ['all'],
+      'Secretary': ['members', 'roles', 'events', 'files', 'attendance', 'announcements', 'audit_logs'],
+      'Treasurer': ['members', 'roles', 'events', 'files', 'attendance', 'finance', 'audit_logs'],
+      'Auditor': ['members', 'roles', 'events', 'attendance', 'audit_logs'],
+      'PIO': ['announcements'],
+      'Sgt. at Arms': ['view_only'],
+      'Member': ['view_only']
+    };
+
+    const OFFICER_ROLES = ['President', 'VP', 'Secretary', 'Treasurer', 'Auditor', 'PIO', 'Sgt. at Arms'];
+
+    // Utility functions
+    function showAlert(message, type = 'info') {
+      const alertDiv = document.getElementById('authAlert');
+      alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+      setTimeout(() => {
+        alertDiv.innerHTML = '';
+      }, 5000);
+    }
+
+    function showLoading(show = true) {
+      document.getElementById('loadingOverlay').classList.toggle('active', show);
+    }
+
+    function switchAuthTab(tab) {
+      document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+      
+      if (tab === 'signin') {
+        document.querySelectorAll('.auth-tab')[0].classList.add('active');
+        document.getElementById('signinForm').classList.add('active');
       } else {
-        clearLocal();
-        show($('authArea'));
+        document.querySelectorAll('.auth-tab')[1].classList.add('active');
+        document.getElementById('signupForm').classList.add('active');
       }
-    }).catch(e=>{
-      // if DB read fails, still attempt to show auth
-      show($('authArea'));
-      console.error(e);
-    });
-  } else {
-    show($('authArea'));
-  }
-})();
+    }
 
-</script>
-</body>
+
+
+    // Check if role is already taken
+    async function checkRoleTaken(role) {
+      if (role === 'Member') return false;
+      
+      const snapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/users`).once('value');
+      const users = snapshot.val() || {};
+      
+      return Object.values(users).some(user => user.role === role && user.approved);
+    }
+
+    // Auth handlers
+    async function handleSignUp(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const phone = document.getElementById('signupPhone').value;
+      const password = document.getElementById('signupPassword').value;
+      const role = document.getElementById('signupRole').value;
+
+      // Validate role selection
+      if (!role) {
+        showAlert('Please select a role', 'error');
+        return;
+      }
+
+      showLoading(true);
+
+      try {
+        // Check if role is taken
+        const roleTaken = await checkRoleTaken(role);
+        if (roleTaken) {
+          // Send Discord notification about rejection
+          await sendDiscordNotification(`❌ REJECTED: ${name} (${email}) tried to signup as ${role} - Position already filled`);
+          
+          showAlert(`The ${role} position is already filled. Please choose another role.`, 'error');
+          showLoading(false);
+          return;
+        }
+
+        // Create user
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Update profile
+        await user.updateProfile({ displayName: name });
+        
+        // Save user data - all users are approved immediately
+        const userData = {
+          uid: user.uid,
+          name: name,
+          email: email,
+          phone: phone || '',
+          role: role,
+          approved: true,
+          createdAt: Date.now()
+        };
+
+        await database.ref(`organizations/${CONFIG.ORG_ID}/users/${user.uid}`).set(userData);
+
+        // Add audit log
+        await addAuditLog('User Registration', `${name} registered as ${role}`, user.uid);
+
+        // Send Discord notification about successful signup
+        await sendDiscordNotification(`✅ NEW MEMBER: ${name} (${email}) signed up as ${role}`);
+          
+        showAlert('Account created successfully! You can now access the portal.', 'success');
+        localStorage.setItem('rememberedUser', user.uid);
+
+        showLoading(false);
+        
+      } catch (error) {
+        console.error('Signup error:', error);
+        let errorMessage = error.message;
+        
+        // Make error messages more user-friendly
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = 'This email is already registered. Please sign in instead.';
+        } else if (error.code === 'auth/weak-password') {
+          errorMessage = 'Password should be at least 6 characters.';
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = 'Please enter a valid email address.';
+        }
+        
+        showAlert(errorMessage, 'error');
+        showLoading(false);
+      }
+    }
+
+    async function handleSignIn(event) {
+      event.preventDefault();
+      showLoading(true);
+      
+      const email = document.getElementById('signinEmail').value;
+      const password = document.getElementById('signinPassword').value;
+
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Check if approved
+        const snapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/users/${user.uid}`).once('value');
+        const userData = snapshot.val();
+
+        if (!userData) {
+          showAlert('User data not found. Please contact administrator.', 'error');
+          await auth.signOut();
+          showLoading(false);
+          return;
+        }
+
+        if (!userData.approved) {
+          showAlert('Your account is pending approval. Please wait for administrator approval.', 'warning');
+          await auth.signOut();
+          showLoading(false);
+          return;
+        }
+
+        // Remember user
+        localStorage.setItem('rememberedUser', user.uid);
+
+        showAlert('Signed in successfully!', 'success');
+        showLoading(false);
+        
+      } catch (error) {
+        console.error('Sign in error:', error);
+        showAlert(error.message, 'error');
+        showLoading(false);
+      }
+    }
+
+    async function handleGoogleSignIn() {
+      showLoading(true);
+      
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const userCredential = await auth.signInWithPopup(provider);
+        const user = userCredential.user;
+
+        // Check if user exists
+        const snapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/users/${user.uid}`).once('value');
+        let userData = snapshot.val();
+
+        if (!userData) {
+          // New user - need to set role
+          showAlert('Please complete your signup by selecting a role.', 'info');
+          document.getElementById('signupName').value = user.displayName || '';
+          document.getElementById('signupEmail').value = user.email || '';
+          switchAuthTab('signup');
+          await auth.signOut();
+          showLoading(false);
+          return;
+        }
+
+        if (!userData.approved) {
+          showAlert('Your account is pending approval.', 'warning');
+          await auth.signOut();
+          showLoading(false);
+          return;
+        }
+
+        localStorage.setItem('rememberedUser', user.uid);
+        showAlert('Signed in with Google successfully!', 'success');
+        showLoading(false);
+        
+      } catch (error) {
+        console.error('Google sign in error:', error);
+        showAlert(error.message, 'error');
+        showLoading(false);
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await auth.signOut();
+        localStorage.removeItem('rememberedUser');
+        location.reload();
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    }
+
+    // Discord notifications
+    async function sendDiscordNotification(message) {
+      try {
+        await fetch(CONFIG.DISCORD_WEBHOOK, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: message })
+        });
+      } catch (error) {
+        console.error('Discord notification error:', error);
+      }
+    }
+
+    // Email queue (for Cloud Functions to process)
+    async function queueEmail(to, subject, body) {
+      try {
+        await database.ref(`organizations/${CONFIG.ORG_ID}/email_queue`).push({
+          to: to,
+          subject: subject,
+          body: body,
+          queued: Date.now(),
+          sent: false
+        });
+      } catch (error) {
+        console.error('Email queue error:', error);
+      }
+    }
+
+    // Audit logging
+    async function addAuditLog(action, details, userId) {
+      try {
+        await database.ref(`organizations/${CONFIG.ORG_ID}/audit_logs`).push({
+          action: action,
+          details: details,
+          userId: userId,
+          userName: currentUserData?.name || 'System',
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error('Audit log error:', error);
+      }
+    }
+
+    // Check permissions
+    function hasPermission(permission) {
+      if (!currentUserData) return false;
+      const userPermissions = ROLE_PERMISSIONS[currentUserData.role] || [];
+      return userPermissions.includes('all') || userPermissions.includes(permission);
+    }
+
+    // Initialize app
+    function initializeApp() {
+      const tabs = [
+        { id: 'dashboard', name: 'Dashboard', permission: 'all' },
+        { id: 'members', name: 'Members', permission: 'members' },
+        { id: 'roles', name: 'Roles', permission: 'roles' },
+        { id: 'events', name: 'Events', permission: 'events' },
+        { id: 'files', name: 'Files', permission: 'files' },
+        { id: 'attendance', name: 'Attendance', permission: 'attendance' },
+        { id: 'finance', name: 'Finance', permission: 'finance' },
+        { id: 'announcements', name: 'Announcements', permission: 'announcements' },
+        { id: 'audit_logs', name: 'Audit Logs', permission: 'audit_logs' },
+        { id: 'settings', name: 'Settings', permission: 'all' }
+      ];
+
+      // Update user info
+      document.getElementById('userName').textContent = currentUserData.name;
+      document.getElementById('userRole').innerHTML = `
+        <span class="role-badge role-${currentUserData.role.toLowerCase().replace(/\s+/g, '-').replace('.', '')}">${currentUserData.role}</span>
+      `;
+
+      // Generate tabs
+      const tabsNav = document.getElementById('tabsNav');
+      const tabContents = document.getElementById('tabContents');
+      
+      tabsNav.innerHTML = '';
+      tabContents.innerHTML = '';
+
+      tabs.forEach((tab, index) => {
+        if (hasPermission(tab.permission) || tab.permission === 'all') {
+          const tabBtn = document.createElement('button');
+          tabBtn.className = `tab-btn ${index === 0 ? 'active' : ''}`;
+          tabBtn.textContent = tab.name;
+          tabBtn.onclick = () => switchTab(tab.id);
+          tabsNav.appendChild(tabBtn);
+
+          const tabContent = document.createElement('div');
+          tabContent.id = `tab-${tab.id}`;
+          tabContent.className = `tab-content ${index === 0 ? 'active' : ''}`;
+          tabContents.appendChild(tabContent);
+        }
+      });
+
+      // Load initial data
+      loadAllData();
+      renderDashboard();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+
+      // Render tab content
+      switch(tabId) {
+        case 'dashboard': renderDashboard(); break;
+        case 'members': renderMembers(); break;
+        case 'roles': renderRoles(); break;
+        case 'events': renderEvents(); break;
+        case 'files': renderFiles(); break;
+        case 'attendance': renderAttendance(); break;
+        case 'finance': renderFinance(); break;
+        case 'announcements': renderAnnouncements(); break;
+        case 'audit_logs': renderAuditLogs(); break;
+        case 'settings': renderSettings(); break;
+      }
+    }
+
+    // Load all data
+    async function loadAllData() {
+      try {
+        // Load users
+        const usersSnapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/users`).once('value');
+        allUsers = Object.values(usersSnapshot.val() || {});
+
+        // Load events
+        const eventsSnapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/events`).once('value');
+        allEvents = Object.entries(eventsSnapshot.val() || {}).map(([id, data]) => ({ id, ...data }));
+
+        // Load announcements
+        const announcementsSnapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/announcements`).once('value');
+        allAnnouncements = Object.entries(announcementsSnapshot.val() || {}).map(([id, data]) => ({ id, ...data }));
+
+        // Load finance records
+        const financeSnapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/finance`).once('value');
+        allFinanceRecords = Object.entries(financeSnapshot.val() || {}).map(([id, data]) => ({ id, ...data }));
+
+        // Load audit logs
+        const logsSnapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/audit_logs`).once('value');
+        allAuditLogs = Object.entries(logsSnapshot.val() || {}).map(([id, data]) => ({ id, ...data }));
+
+        // Load files from Firebase
+        const filesSnapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/files`).once('value');
+        allFiles = Object.entries(filesSnapshot.val() || {}).map(([id, data]) => ({ id, ...data }));
+
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    }
+
+    // Dashboard
+    function renderDashboard() {
+      const container = document.getElementById('tab-dashboard');
+      const totalMembers = allUsers.filter(u => u.approved).length;
+      const totalOfficers = allUsers.filter(u => u.approved && OFFICER_ROLES.includes(u.role)).length;
+      const upcomingEvents = allEvents.filter(e => new Date(e.date) >= new Date()).length;
+      const vacantPositions = OFFICER_ROLES.filter(role => !allUsers.find(u => u.role === role && u.approved)).length;
+
+      container.innerHTML = `
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Members</h3>
+            <div class="stat-value">${totalMembers}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Officers</h3>
+            <div class="stat-value">${totalOfficers}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Upcoming Events</h3>
+            <div class="stat-value">${upcomingEvents}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Vacant Positions</h3>
+            <div class="stat-value">${vacantPositions}</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Recent Announcements</h2>
+          </div>
+          ${allAnnouncements.length > 0 ? 
+            allAnnouncements.slice(0, 3).map(a => `
+              <div class="announcement-item">
+                <div class="announcement-title">${a.title}</div>
+                <div class="announcement-meta">Posted by ${a.authorName} • ${new Date(a.timestamp).toLocaleDateString()}</div>
+                <div class="announcement-content">${a.content}</div>
+              </div>
+            `).join('') :
+            '<div class="empty-state"><h3>No announcements yet</h3></div>'
+          }
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Upcoming Events</h2>
+          </div>
+          ${upcomingEvents > 0 ?
+            allEvents.filter(e => new Date(e.date) >= new Date()).slice(0, 5).map(e => `
+              <div style="padding: 12px; border-bottom: 1px solid #f0f0f0;">
+                <strong>${e.title}</strong> - ${new Date(e.date).toLocaleDateString()}
+                <p style="font-size: 14px; color: #666; margin-top: 4px;">${e.description}</p>
+              </div>
+            `).join('') :
+            '<div class="empty-state"><h3>No upcoming events</h3></div>'
+          }
+        </div>
+      `;
+    }
+
+    // Members tab
+    function renderMembers() {
+      const container = document.getElementById('tab-members');
+      const canEdit = hasPermission('members');
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Members Directory</h2>
+            ${canEdit ? '<button class="btn-small" onclick="openAddMemberModal()">Add Member</button>' : ''}
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Phone</th>
+                  ${canEdit ? '<th>Actions</th>' : ''}
+                </tr>
+              </thead>
+              <tbody>
+                ${allUsers.filter(u => u.approved).map(user => `
+                  <tr>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td><span class="role-badge role-${user.role.toLowerCase().replace(/\s+/g, '-').replace('.', '')}">${user.role}</span></td>
+                    <td>${user.phone || 'N/A'}</td>
+                    ${canEdit ? `
+                      <td>
+                        <div class="action-buttons">
+                          <button class="btn-icon" onclick="editMember('${user.uid}')">Edit</button>
+                          <button class="btn-icon btn-danger" onclick="deleteMember('${user.uid}')">Delete</button>
+                        </div>
+                      </td>
+                    ` : ''}
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // Roles tab
+    function renderRoles() {
+      const container = document.getElementById('tab-roles');
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Role Assignments</h2>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Role</th>
+                  <th>Assigned To</th>
+                  <th>Email</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${OFFICER_ROLES.map(role => {
+                  const assignedUser = allUsers.find(u => u.role === role && u.approved);
+                  return `
+                    <tr>
+                      <td><span class="role-badge role-${role.toLowerCase().replace(/\s+/g, '-').replace('.', '')}">${role}</span></td>
+                      <td>${assignedUser ? assignedUser.name : 'Vacant'}</td>
+                      <td>${assignedUser ? assignedUser.email : '-'}</td>
+                      <td>${assignedUser ? '✅ Filled' : '⚠️ Vacant'}</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Role Change History</h2>
+          </div>
+          ${allAuditLogs.filter(log => log.action === 'Role Change').length > 0 ?
+            allAuditLogs.filter(log => log.action === 'Role Change').slice(0, 10).map(log => `
+              <div class="log-entry">
+                <div class="log-header">
+                  <div class="log-action">${log.action}</div>
+                  <div class="log-time">${new Date(log.timestamp).toLocaleString()}</div>
+                </div>
+                <div class="log-details">${log.details}</div>
+              </div>
+            `).join('') :
+            '<div class="empty-state"><h3>No role changes yet</h3></div>'
+          }
+        </div>
+      `;
+    }
+
+    // Events tab
+    function renderEvents() {
+      const container = document.getElementById('tab-events');
+      const canEdit = hasPermission('events');
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Events Calendar</h2>
+            ${canEdit ? '<button class="btn-small" onclick="openAddEventModal()">Add Event</button>' : ''}
+          </div>
+          ${allEvents.length > 0 ?
+            allEvents.sort((a, b) => new Date(b.date) - new Date(a.date)).map(event => `
+              <div class="announcement-item">
+                <div class="announcement-header">
+                  <div>
+                    <div class="announcement-title">${event.title}</div>
+                    <div class="announcement-meta">📅 ${new Date(event.date).toLocaleDateString()} at ${event.time || 'TBA'}</div>
+                  </div>
+                  ${canEdit ? `
+                    <div class="action-buttons">
+                      <button class="btn-icon" onclick="downloadICS('${event.id}')">📥 ICS</button>
+                      <button class="btn-icon btn-danger" onclick="deleteEvent('${event.id}')">Delete</button>
+                    </div>
+                  ` : ''}
+                </div>
+                <div class="announcement-content">${event.description}</div>
+                ${event.location ? `<div style="margin-top: 8px; font-size: 14px; color: #666;">📍 ${event.location}</div>` : ''}
+              </div>
+            `).join('') :
+            '<div class="empty-state"><h3>No events scheduled</h3><p>Add your first event to get started</p></div>'
+          }
+        </div>
+      `;
+    }
+
+    // Files tab
+    function renderFiles() {
+      const container = document.getElementById('tab-files');
+      const canEdit = hasPermission('files');
+
+      // Filter files based on visibility permissions
+      const visibleFiles = allFiles.filter(file => {
+        if (file.visibility === 'all') return true;
+        if (file.visibility === 'officers' && OFFICER_ROLES.includes(currentUserData.role)) return true;
+        if (file.visibility === 'admins' && ['President', 'VP'].includes(currentUserData.role)) return true;
+        return false;
+      });
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Shared Files</h2>
+            ${canEdit ? '<button class="btn-small" onclick="openUploadModal()">Upload File</button>' : ''}
+          </div>
+          ${visibleFiles.length > 0 ?
+            `<div class="file-list">
+              ${visibleFiles.sort((a, b) => b.uploadedAt - a.uploadedAt).map(file => {
+                const fileTypeIcon = {
+                  'Receipt': '🧾',
+                  'Report': '📊',
+                  'Document': '📄',
+                  'Image': '🖼️',
+                  'Presentation': '📽️',
+                  'Spreadsheet': '📈',
+                  'Other': '📁'
+                }[file.type] || '📁';
+
+                const visibilityBadge = {
+                  'all': '<span style="background: #4caf50; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">👥 All</span>',
+                  'officers': '<span style="background: #ff9800; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">👔 Officers</span>',
+                  'admins': '<span style="background: #f44336; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px;">🔒 Admins</span>'
+                }[file.visibility] || '';
+
+                return `
+                <div class="file-item">
+                  <div>
+                    <div class="file-item-name">${fileTypeIcon} ${file.title}</div>
+                    <div class="file-item-meta">
+                      ${file.fileName} • ${(file.size / 1024).toFixed(2)} KB<br>
+                      ${file.description || 'No description'}<br>
+                      <span style="color: #667eea; font-weight: 600;">${file.type}</span> ${visibilityBadge}<br>
+                      Uploaded by ${file.uploaderName} on ${new Date(file.uploadedAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div class="action-buttons">
+                    <button class="btn-icon" onclick="downloadFile('${file.storagePath}', '${file.fileName}')">Download</button>
+                    ${canEdit && (file.uploadedBy === currentUser.uid || ['President', 'VP'].includes(currentUserData.role)) ? 
+                      `<button class="btn-icon btn-danger" onclick="deleteFile('${file.id}', '${file.storagePath}')">Delete</button>` : ''}
+                  </div>
+                </div>
+              `;
+              }).join('')}
+            </div>` :
+            '<div class="empty-state"><h3>No files available</h3><p>Files may be restricted based on your role</p></div>'
+          }
+        </div>
+      `;
+    }
+
+    // Attendance tab
+    function renderAttendance() {
+      const container = document.getElementById('tab-attendance');
+      const canEdit = hasPermission('attendance');
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Event Attendance</h2>
+            ${canEdit ? '<button class="btn-small" onclick="exportAttendanceCSV()">Export CSV</button>' : ''}
+          </div>
+          ${allEvents.length > 0 ?
+            allEvents.map(event => `
+              <div style="margin-bottom: 30px;">
+                <h3 style="margin-bottom: 16px; color: #333;">${event.title} - ${new Date(event.date).toLocaleDateString()}</h3>
+                <div class="attendance-grid">
+                  ${allUsers.filter(u => u.approved).map(user => {
+                    const attended = event.attendance?.[user.uid] || false;
+                    return `
+                      <div class="attendance-card ${attended ? 'present' : ''}">
+                        <h4>${user.name}</h4>
+                        <p>${user.role}</p>
+                        ${canEdit ? `
+                          <label class="checkbox-label">
+                            <input type="checkbox" ${attended ? 'checked' : ''} onchange="toggleAttendance('${event.id}', '${user.uid}', this.checked)">
+                            <span>${attended ? 'Present' : 'Absent'}</span>
+                          </label>
+                        ` : `<div>${attended ? '✅ Present' : '❌ Absent'}</div>`}
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `).join('') :
+            '<div class="empty-state"><h3>No events for attendance tracking</h3></div>'
+          }
+        </div>
+      `;
+    }
+
+    // Finance tab
+    function renderFinance() {
+      const container = document.getElementById('tab-finance');
+      const canEdit = hasPermission('finance');
+      
+      const totalIncome = allFinanceRecords.filter(r => r.type === 'income').reduce((sum, r) => sum + r.amount, 0);
+      const totalExpense = allFinanceRecords.filter(r => r.type === 'expense').reduce((sum, r) => sum + r.amount, 0);
+      const balance = totalIncome - totalExpense;
+
+      container.innerHTML = `
+        <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <div class="stat-card" style="background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);">
+            <h3>Total Income</h3>
+            <div class="stat-value">₱${totalIncome.toLocaleString()}</div>
+          </div>
+          <div class="stat-card" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);">
+            <h3>Total Expenses</h3>
+            <div class="stat-value">₱${totalExpense.toLocaleString()}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Balance</h3>
+            <div class="stat-value">₱${balance.toLocaleString()}</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Financial Ledger</h2>
+            <div class="card-actions">
+              ${canEdit ? '<button class="btn-small" onclick="openAddFinanceModal()">Add Record</button>' : ''}
+              <button class="btn-small" onclick="exportFinanceCSV()">Export CSV</button>
+            </div>
+          </div>
+          ${allFinanceRecords.length > 0 ?
+            allFinanceRecords.sort((a, b) => b.date - a.date).map(record => `
+              <div class="ledger-entry ${record.type}">
+                <div class="ledger-entry-left">
+                  <h4>${record.description}</h4>
+                  <p>${record.category || 'Uncategorized'}</p>
+                </div>
+                <div class="ledger-entry-right">
+                  <div class="ledger-amount ${record.type}">
+                    ${record.type === 'income' ? '+' : '-'}₱${record.amount.toLocaleString()}
+                  </div>
+                  <div class="ledger-date">${new Date(record.date).toLocaleDateString()}</div>
+                </div>
+              </div>
+            `).join('') :
+            '<div class="empty-state"><h3>No financial records yet</h3></div>'
+          }
+        </div>
+      `;
+    }
+
+    // Announcements tab
+    function renderAnnouncements() {
+      const container = document.getElementById('tab-announcements');
+      const canEdit = hasPermission('announcements');
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Announcements</h2>
+            ${canEdit ? '<button class="btn-small" onclick="openAddAnnouncementModal()">New Announcement</button>' : ''}
+          </div>
+          ${allAnnouncements.length > 0 ?
+            allAnnouncements.sort((a, b) => b.timestamp - a.timestamp).map(announcement => `
+              <div class="announcement-item">
+                <div class="announcement-header">
+                  <div>
+                    <div class="announcement-title">${announcement.title}</div>
+                    <div class="announcement-meta">Posted by ${announcement.authorName} • ${new Date(announcement.timestamp).toLocaleString()}</div>
+                  </div>
+                  ${canEdit && announcement.authorId === currentUser.uid ? `
+                    <div class="action-buttons">
+                      <button class="btn-icon" onclick="editAnnouncement('${announcement.id}')">Edit</button>
+                      <button class="btn-icon btn-danger" onclick="deleteAnnouncement('${announcement.id}')">Delete</button>
+                    </div>
+                  ` : ''}
+                </div>
+                <div class="announcement-content">${announcement.content}</div>
+              </div>
+            `).join('') :
+            '<div class="empty-state"><h3>No announcements yet</h3></div>'
+          }
+        </div>
+      `;
+    }
+
+
+
+    // Audit Logs tab
+    function renderAuditLogs() {
+      const container = document.getElementById('tab-audit_logs');
+      const canView = hasPermission('audit_logs');
+
+      if (!canView) {
+        container.innerHTML = '<div class="card"><div class="empty-state"><h3>Access Denied</h3><p>You do not have permission to view audit logs</p></div></div>';
+        return;
+      }
+
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Audit Logs</h2>
+            <button class="btn-small" onclick="exportAuditLogsCSV()">Export CSV</button>
+          </div>
+          <div class="search-bar">
+            <input type="text" placeholder="Search logs..." oninput="filterAuditLogs(this.value)">
+          </div>
+          <div id="auditLogsList">
+            ${allAuditLogs.length > 0 ?
+              allAuditLogs.sort((a, b) => b.timestamp - a.timestamp).map(log => `
+                <div class="log-entry">
+                  <div class="log-header">
+                    <div class="log-action">${log.action}</div>
+                    <div class="log-time">${new Date(log.timestamp).toLocaleString()}</div>
+                  </div>
+                  <div class="log-details">
+                    ${log.details}<br>
+                    <small>By: ${log.userName}</small>
+                  </div>
+                </div>
+              `).join('') :
+              '<div class="empty-state"><h3>No audit logs yet</h3></div>'
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    // Settings tab
+    function renderSettings() {
+      const container = document.getElementById('tab-settings');
+      container.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h2>Account Settings</h2>
+          </div>
+          <form onsubmit="updateProfile(event)">
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" id="settingsName" value="${currentUserData.name}" required>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" value="${currentUserData.email}" disabled>
+              <small>Email cannot be changed</small>
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" id="settingsPhone" value="${currentUserData.phone || ''}" placeholder="+63 XXX XXX XXXX">
+            </div>
+            <div class="form-group">
+              <label>Current Role</label>
+              <input type="text" value="${currentUserData.role}" disabled>
+            </div>
+            <button type="submit" class="btn">Update Profile</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Change Password</h2>
+          </div>
+          <form onsubmit="changePassword(event)">
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" id="newPassword" required minlength="6">
+            </div>
+            <div class="form-group">
+              <label>Confirm Password</label>
+              <input type="password" id="confirmPassword" required minlength="6">
+            </div>
+            <button type="submit" class="btn">Change Password</button>
+          </form>
+        </div>
+      `;
+    }
+
+    // Modal functions
+    function openAddMemberModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active';
+      modal.id = 'addMemberModal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add New Member</h2>
+            <button class="btn-close" onclick="closeModal('addMemberModal')">&times;</button>
+          </div>
+          <form onsubmit="addMember(event)">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="memberName" required>
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="memberEmail" required>
+            </div>
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="tel" id="memberPhone">
+            </div>
+            <div class="form-group">
+              <label>Role</label>
+              <select id="memberRole" required>
+                <option value="">Select role...</option>
+                ${OFFICER_ROLES.map(role => `<option value="${role}">${role}</option>`).join('')}
+                <option value="Member">Member</option>
+              </select>
+            </div>
+            <button type="submit" class="btn">Add Member</button>
+          </form>
+        </div>
+      `;
+      document.getElementById('modalContainer').appendChild(modal);
+    }
+
+    function openAddEventModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active';
+      modal.id = 'addEventModal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add New Event</h2>
+            <button class="btn-close" onclick="closeModal('addEventModal')">&times;</button>
+          </div>
+          <form onsubmit="addEvent(event)">
+            <div class="form-group">
+              <label>Event Title</label>
+              <input type="text" id="eventTitle" required>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="eventDescription" required></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Date</label>
+                <input type="date" id="eventDate" required>
+              </div>
+              <div class="form-group">
+                <label>Time</label>
+                <input type="time" id="eventTime">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" id="eventLocation">
+            </div>
+            <button type="submit" class="btn">Add Event</button>
+          </form>
+        </div>
+      `;
+      document.getElementById('modalContainer').appendChild(modal);
+    }
+
+    function openAddFinanceModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active';
+      modal.id = 'addFinanceModal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Add Financial Record</h2>
+            <button class="btn-close" onclick="closeModal('addFinanceModal')">&times;</button>
+          </div>
+          <form onsubmit="addFinanceRecord(event)">
+            <div class="form-group">
+              <label>Type</label>
+              <select id="financeType" required>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Amount (₱)</label>
+              <input type="number" id="financeAmount" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <input type="text" id="financeDescription" required>
+            </div>
+            <div class="form-group">
+              <label>Category</label>
+              <input type="text" id="financeCategory" placeholder="e.g., Membership Fees, Event Expenses">
+            </div>
+            <div class="form-group">
+              <label>Date</label>
+              <input type="date" id="financeDate" required>
+            </div>
+            <button type="submit" class="btn">Add Record</button>
+          </form>
+        </div>
+      `;
+      document.getElementById('modalContainer').appendChild(modal);
+    }
+
+    function openAddAnnouncementModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active';
+      modal.id = 'addAnnouncementModal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>New Announcement</h2>
+            <button class="btn-close" onclick="closeModal('addAnnouncementModal')">&times;</button>
+          </div>
+          <form onsubmit="addAnnouncement(event)">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" id="announcementTitle" required>
+            </div>
+            <div class="form-group">
+              <label>Content</label>
+              <textarea id="announcementContent" required style="min-height: 150px;"></textarea>
+            </div>
+            <button type="submit" class="btn">Post Announcement</button>
+          </form>
+        </div>
+      `;
+      document.getElementById('modalContainer').appendChild(modal);
+    }
+
+    function openUploadModal() {
+      const modal = document.createElement('div');
+      modal.className = 'modal active';
+      modal.id = 'uploadModal';
+      modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Upload File</h2>
+            <button class="btn-close" onclick="closeModal('uploadModal')">&times;</button>
+          </div>
+          <form onsubmit="uploadFile(event)">
+            <div class="form-group">
+              <label>File Title</label>
+              <input type="text" id="fileTitle" required placeholder="e.g., Budget Report Q1 2024">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea id="fileDescription" placeholder="Brief description of the file..." style="min-height: 80px;"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>File Type</label>
+                <select id="fileType" required>
+                  <option value="">Select type...</option>
+                  <option value="Receipt">Receipt</option>
+                  <option value="Report">Report</option>
+                  <option value="Document">Document</option>
+                  <option value="Image">Image</option>
+                  <option value="Presentation">Presentation</option>
+                  <option value="Spreadsheet">Spreadsheet</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Visibility</label>
+                <select id="fileVisibility" required>
+                  <option value="all">All Members</option>
+                  <option value="officers">Officers Only</option>
+                  <option value="admins">Admins Only (President & VP)</option>
+                </select>
+              </div>
+            </div>
+            <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+              <input type="file" id="fileInput" required>
+              <div style="font-size: 48px; margin-bottom: 16px;">📁</div>
+              <div>Click to select file or drag and drop</div>
+              <div style="font-size: 12px; color: #999; margin-top: 8px;">Maximum file size: 10MB</div>
+            </div>
+            <div id="selectedFileName" style="margin-top: 16px; font-size: 14px; color: #666;"></div>
+            <button type="submit" class="btn" style="margin-top: 20px;">Upload File</button>
+          </form>
+        </div>
+      `;
+      document.getElementById('modalContainer').appendChild(modal);
+
+      document.getElementById('fileInput').addEventListener('change', (e) => {
+        const fileName = e.target.files[0]?.name;
+        if (fileName) {
+          document.getElementById('selectedFileName').textContent = `Selected: ${fileName}`;
+        }
+      });
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.remove();
+    }
+
+    // Action handlers
+    async function addMember(event) {
+      event.preventDefault();
+      showLoading(true);
+
+      try {
+        const name = document.getElementById('memberName').value;
+        const email = document.getElementById('memberEmail').value;
+        const phone = document.getElementById('memberPhone').value;
+        const role = document.getElementById('memberRole').value;
+
+        // Check if role is taken
+        const roleTaken = await checkRoleTaken(role);
+        if (roleTaken) {
+          alert(`The ${role} role is already taken.`);
+          showLoading(false);
+          return;
+        }
+
+        // Create temporary password
+        const tempPassword = Math.random().toString(36).slice(-8);
+
+        // Create user account
+        const userCredential = await auth.createUserWithEmailAndPassword(email, tempPassword);
+        const user = userCredential.user;
+
+        await user.updateProfile({ displayName: name });
+
+        // Save user data
+        await database.ref(`organizations/${CONFIG.ORG_ID}/users/${user.uid}`).set({
+          uid: user.uid,
+          name: name,
+          email: email,
+          phone: phone,
+          role: role,
+          approved: true,
+          createdAt: Date.now()
+        });
+
+        // Send welcome email
+        await queueEmail(email, 'Welcome to CVSU Portal', `Your account has been created. Temporary password: ${tempPassword}`);
+
+        // Add audit log
+        await addAuditLog('Member Added', `${name} added as ${role}`, currentUser.uid);
+
+        closeModal('addMemberModal');
+        await loadAllData();
+        renderMembers();
+        showLoading(false);
+        alert('Member added successfully!');
+
+      } catch (error) {
+        console.error('Error adding member:', error);
+        alert('Failed to add member: ' + error.message);
+        showLoading(false);
+      }
+    }
+
+    async function deleteMember(uid) {
+      if (!window.confirm('Are you sure you want to delete this member?')) return;
+
+      showLoading(true);
+      try {
+        const user = allUsers.find(u => u.uid === uid);
+        
+        await database.ref(`organizations/${CONFIG.ORG_ID}/users/${uid}`).remove();
+        await addAuditLog('Member Deleted', `${user.name} (${user.role}) removed from organization`, currentUser.uid);
+
+        await loadAllData();
+        renderMembers();
+        showLoading(false);
+        alert('Member deleted successfully');
+
+      } catch (error) {
+        console.error('Error deleting member:', error);
+        alert('Failed to delete member');
+        showLoading(false);
+      }
+    }
+
+    async function addEvent(event) {
+      event.preventDefault();
+      showLoading(true);
+
+      try {
+        const eventData = {
+          title: document.getElementById('eventTitle').value,
+          description: document.getElementById('eventDescription').value,
+          date: new Date(document.getElementById('eventDate').value).getTime(),
+          time: document.getElementById('eventTime').value,
+          location: document.getElementById('eventLocation').value,
+          createdBy: currentUser.uid,
+          createdAt: Date.now(),
+          attendance: {}
+        };
+
+        await database.ref(`organizations/${CONFIG.ORG_ID}/events`).push(eventData);
+        await addAuditLog('Event Created', `${eventData.title} scheduled for ${new Date(eventData.date).toLocaleDateString()}`, currentUser.uid);
+
+        // Send Discord notification
+        await sendDiscordNotification(`📅 New event: ${eventData.title} on ${new Date(eventData.date).toLocaleDateString()}`);
+
+        closeModal('addEventModal');
+        await loadAllData();
+        renderEvents();
+        showLoading(false);
+        alert('Event added successfully!');
+
+      } catch (error) {
+        console.error('Error adding event:', error);
+        alert('Failed to add event');
+        showLoading(false);
+      }
+    }
+
+    async function deleteEvent(eventId) {
+      if (!window.confirm('Delete this event?')) return;
+
+      showLoading(true);
+      try {
+        const event = allEvents.find(e => e.id === eventId);
+        await database.ref(`organizations/${CONFIG.ORG_ID}/events/${eventId}`).remove();
+        await addAuditLog('Event Deleted', `${event.title} removed`, currentUser.uid);
+
+        await loadAllData();
+        renderEvents();
+        showLoading(false);
+
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        showLoading(false);
+      }
+    }
+
+    function downloadICS(eventId) {
+      const event = allEvents.find(e => e.id === eventId);
+      if (!event) return;
+
+      const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//CVSU Portal//EN
+BEGIN:VEVENT
+UID:${eventId}@cvsu-portal
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z
+DTSTART:${new Date(event.date).toISOString().replace(/[-:]/g, '').split('.')[0]}Z
+SUMMARY:${event.title}
+DESCRIPTION:${event.description}
+LOCATION:${event.location || ''}
+END:VEVENT
+END:VCALENDAR`;
+
+      const blob = new Blob([icsContent], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${event.title.replace(/\s+/g, '-')}.ics`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function toggleAttendance(eventId, userId, present) {
+      try {
+        await database.ref(`organizations/${CONFIG.ORG_ID}/events/${eventId}/attendance/${userId}`).set(present);
+        await loadAllData();
+      } catch (error) {
+        console.error('Error updating attendance:', error);
+      }
+    }
+
+    function exportAttendanceCSV() {
+      let csv = 'Event,Date,Name,Role,Status\n';
+      
+      allEvents.forEach(event => {
+        allUsers.filter(u => u.approved).forEach(user => {
+          const attended = event.attendance?.[user.uid] || false;
+          csv += `"${event.title}","${new Date(event.date).toLocaleDateString()}","${user.name}","${user.role}","${attended ? 'Present' : 'Absent'}"\n`;
+        });
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'attendance.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function addFinanceRecord(event) {
+      event.preventDefault();
+      showLoading(true);
+
+      try {
+        const recordData = {
+          type: document.getElementById('financeType').value,
+          amount: parseFloat(document.getElementById('financeAmount').value),
+          description: document.getElementById('financeDescription').value,
+          category: document.getElementById('financeCategory').value,
+          date: new Date(document.getElementById('financeDate').value).getTime(),
+          createdBy: currentUser.uid,
+          createdAt: Date.now()
+        };
+
+        await database.ref(`organizations/${CONFIG.ORG_ID}/finance`).push(recordData);
+        await addAuditLog('Finance Record Added', `${recordData.type}: ₱${recordData.amount} - ${recordData.description}`, currentUser.uid);
+
+        closeModal('addFinanceModal');
+        await loadAllData();
+        renderFinance();
+        showLoading(false);
+        alert('Financial record added!');
+
+      } catch (error) {
+        console.error('Error adding finance record:', error);
+        showLoading(false);
+      }
+    }
+
+    function exportFinanceCSV() {
+      let csv = 'Date,Type,Category,Description,Amount\n';
+      
+      allFinanceRecords.sort((a, b) => a.date - b.date).forEach(record => {
+        csv += `"${new Date(record.date).toLocaleDateString()}","${record.type}","${record.category || 'N/A'}","${record.description}",${record.amount}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'finance-ledger.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function addAnnouncement(event) {
+      event.preventDefault();
+      showLoading(true);
+
+      try {
+        const announcementData = {
+          title: document.getElementById('announcementTitle').value,
+          content: document.getElementById('announcementContent').value,
+          authorId: currentUser.uid,
+          authorName: currentUserData.name,
+          timestamp: Date.now()
+        };
+
+        await database.ref(`organizations/${CONFIG.ORG_ID}/announcements`).push(announcementData);
+        await addAuditLog('Announcement Posted', announcementData.title, currentUser.uid);
+
+        // Send Discord notification
+        await sendDiscordNotification(`📢 ${announcementData.title}\n${announcementData.content.substring(0, 100)}...`);
+
+        closeModal('addAnnouncementModal');
+        await loadAllData();
+        renderAnnouncements();
+        showLoading(false);
+        alert('Announcement posted!');
+
+      } catch (error) {
+        console.error('Error posting announcement:', error);
+        showLoading(false);
+      }
+    }
+
+    async function deleteAnnouncement(id) {
+      if (!window.confirm('Delete this announcement?')) return;
+
+      showLoading(true);
+      try {
+        await database.ref(`organizations/${CONFIG.ORG_ID}/announcements/${id}`).remove();
+        await addAuditLog('Announcement Deleted', 'Announcement removed', currentUser.uid);
+
+        await loadAllData();
+        renderAnnouncements();
+        showLoading(false);
+
+      } catch (error) {
+        console.error('Error deleting announcement:', error);
+        showLoading(false);
+      }
+    }
+
+
+
+    function exportAuditLogsCSV() {
+      let csv = 'Timestamp,Action,Details,User\n';
+      
+      allAuditLogs.sort((a, b) => b.timestamp - a.timestamp).forEach(log => {
+        csv += `"${new Date(log.timestamp).toLocaleString()}","${log.action}","${log.details}","${log.userName}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'audit-logs.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function filterAuditLogs(searchTerm) {
+      const logsList = document.getElementById('auditLogsList');
+      const filteredLogs = allAuditLogs.filter(log => 
+        log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.details.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        log.userName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
+      logsList.innerHTML = filteredLogs.length > 0 ?
+        filteredLogs.sort((a, b) => b.timestamp - a.timestamp).map(log => `
+          <div class="log-entry">
+            <div class="log-header">
+              <div class="log-action">${log.action}</div>
+              <div class="log-time">${new Date(log.timestamp).toLocaleString()}</div>
+            </div>
+            <div class="log-details">
+              ${log.details}<br>
+              <small>By: ${log.userName}</small>
+            </div>
+          </div>
+        `).join('') :
+        '<div class="empty-state"><h3>No matching logs found</h3></div>';
+    }
+
+    async function uploadFile(event) {
+      event.preventDefault();
+      showLoading(true);
+
+      try {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        const title = document.getElementById('fileTitle').value;
+        const description = document.getElementById('fileDescription').value;
+        const fileType = document.getElementById('fileType').value;
+        const visibility = document.getElementById('fileVisibility').value;
+
+        if (!file) {
+          alert('Please select a file');
+          showLoading(false);
+          return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          alert('File size must be less than 10MB');
+          showLoading(false);
+          return;
+        }
+
+        const timestamp = Date.now();
+        const filePath = `${CONFIG.ORG_ID}/${timestamp}-${file.name}`;
+        
+        const { data, error } = await supabaseClient.storage
+          .from(CONFIG.SUPABASE.BUCKET)
+          .upload(filePath, file);
+
+        if (error) throw error;
+
+        // Save file metadata to Firebase
+        await database.ref(`organizations/${CONFIG.ORG_ID}/files`).push({
+          fileName: file.name,
+          storagePath: filePath,
+          title: title,
+          description: description,
+          type: fileType,
+          visibility: visibility,
+          uploadedBy: currentUser.uid,
+          uploaderName: currentUserData.name,
+          uploadedAt: timestamp,
+          size: file.size
+        });
+
+        await addAuditLog('File Uploaded', `${title} (${file.name}) uploaded as ${fileType}`, currentUser.uid);
+
+        closeModal('uploadModal');
+        await loadAllData();
+        renderFiles();
+        showLoading(false);
+        alert('File uploaded successfully!');
+
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        alert('Failed to upload file: ' + error.message);
+        showLoading(false);
+      }
+    }
+
+    async function downloadFile(storagePath, fileName) {
+      showLoading(true);
+
+      try {
+        const { data, error } = await supabaseClient.storage
+          .from(CONFIG.SUPABASE.BUCKET)
+          .createSignedUrl(storagePath, 60);
+
+        if (error) throw error;
+
+        // Create a temporary link to download with original filename
+        const link = document.createElement('a');
+        link.href = data.signedUrl;
+        link.download = fileName;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showLoading(false);
+
+      } catch (error) {
+        console.error('Error downloading file:', error);
+        alert('Failed to download file: ' + error.message);
+        showLoading(false);
+      }
+    }
+
+    async function deleteFile(fileId, storagePath) {
+      if (!confirm('Delete this file? This action cannot be undone.')) return;
+
+      showLoading(true);
+
+      try {
+        const file = allFiles.find(f => f.id === fileId);
+
+        // Delete from Supabase storage
+        const { error: storageError } = await supabaseClient.storage
+          .from(CONFIG.SUPABASE.BUCKET)
+          .remove([storagePath]);
+
+        if (storageError) {
+          console.error('Storage deletion error:', storageError);
+          // Continue anyway to delete metadata
+        }
+
+        // Delete metadata from Firebase
+        await database.ref(`organizations/${CONFIG.ORG_ID}/files/${fileId}`).remove();
+        
+        await addAuditLog('File Deleted', `${file.title} (${file.fileName}) deleted`, currentUser.uid);
+
+        await loadAllData();
+        renderFiles();
+        showLoading(false);
+        alert('File deleted successfully');
+
+      } catch (error) {
+        console.error('Error deleting file:', error);
+        alert('Failed to delete file: ' + error.message);
+        showLoading(false);
+      }
+    }
+
+    async function updateProfile(event) {
+      event.preventDefault();
+      showLoading(true);
+
+      try {
+        const name = document.getElementById('settingsName').value;
+        const phone = document.getElementById('settingsPhone').value;
+
+        await currentUser.updateProfile({ displayName: name });
+        await database.ref(`organizations/${CONFIG.ORG_ID}/users/${currentUser.uid}`).update({
+          name: name,
+          phone: phone
+        });
+
+        currentUserData.name = name;
+        currentUserData.phone = phone;
+
+        await addAuditLog('Profile Updated', 'Profile information updated', currentUser.uid);
+
+        document.getElementById('userName').textContent = name;
+        showLoading(false);
+        alert('Profile updated successfully!');
+
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Failed to update profile');
+        showLoading(false);
+      }
+    }
+
+    async function changePassword(event) {
+      event.preventDefault();
+
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (newPassword !== confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+
+      showLoading(true);
+
+      try {
+        await currentUser.updatePassword(newPassword);
+        await addAuditLog('Password Changed', 'User password updated', currentUser.uid);
+
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        
+        showLoading(false);
+        alert('Password changed successfully!');
+
+      } catch (error) {
+        console.error('Error changing password:', error);
+        alert('Failed to change password. You may need to re-login.');
+        showLoading(false);
+      }
+    }
+
+    // Auth state observer
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+
+        // Load user data
+        const snapshot = await database.ref(`organizations/${CONFIG.ORG_ID}/users/${user.uid}`).once('value');
+        currentUserData = snapshot.val();
+
+        if (!currentUserData) {
+          document.getElementById('authScreen').classList.remove('active');
+          document.getElementById('appScreen').classList.remove('active');
+          showAlert('User data not found', 'error');
+          await auth.signOut();
+          return;
+        }
+
+        if (!currentUserData.approved) {
+          document.getElementById('authScreen').classList.remove('active');
+          document.getElementById('appScreen').classList.remove('active');
+          showAlert('Your account is pending approval', 'warning');
+          await auth.signOut();
+          return;
+        }
+
+        // Show app
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('appScreen').classList.add('active');
+        initializeApp();
+
+      } else {
+        // Check for remembered user
+        const rememberedUid = localStorage.getItem('rememberedUser');
+        if (rememberedUid) {
+          // User was remembered but session expired - they need to sign in again
+          localStorage.removeItem('rememberedUser');
+        }
+
+        // Show auth screen
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('appScreen').classList.remove('active');
+        currentUser = null;
+        currentUserData = null;
+      }
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a294d86b7d16097',t:'MTc2MzgyMzY5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
