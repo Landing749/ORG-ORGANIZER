@@ -408,6 +408,11 @@
       color: #1565c0;
     }
 
+    .badge-primary {
+      background: #e8eaf6;
+      color: #3f51b5;
+    }
+
     .btn-secondary {
       padding: 8px 16px;
       background: #667eea;
@@ -625,6 +630,46 @@
       color: #333;
     }
 
+    .member-card {
+      background: #f5f7fa;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .member-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .member-info h4 {
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .member-info p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .member-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .org-selector-container {
+      background: #f5f7fa;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+    }
+
     @media (max-width: 768px) {
       .header {
         flex-direction: column;
@@ -750,7 +795,7 @@
      </div>
     </div><!-- Tabs -->
     <div class="tabs-container">
-     <div class="tabs"><button class="tab active" data-tab="overview">📊 Overview</button> <button class="tab" data-tab="users">👥 Users</button> <button class="tab" data-tab="organizations">🏛️ Organizations</button> <button class="tab" data-tab="auditLogs">📋 Audit Logs</button> <button class="tab" data-tab="database">💾 Database</button> <button class="tab" data-tab="systemHealth">🏥 System Health</button>
+     <div class="tabs"><button class="tab active" data-tab="overview">📊 Overview</button> <button class="tab" data-tab="users">👥 Users</button> <button class="tab" data-tab="organizations">🏛️ Organizations</button> <button class="tab" data-tab="members">👤 Member Roles</button> <button class="tab" data-tab="auditLogs">📋 Audit Logs</button> <button class="tab" data-tab="database">💾 Database</button> <button class="tab" data-tab="systemHealth">🏥 System Health</button>
      </div>
     </div><!-- Overview Tab -->
     <div class="tab-content active" id="overview">
@@ -815,6 +860,29 @@
         </thead>
         <tbody id="orgsTableBody"></tbody>
        </table>
+      </div>
+     </div>
+    </div><!-- Member Roles Tab -->
+    <div class="tab-content" id="members">
+     <div class="card">
+      <h2>👤 Member Role Management</h2>
+      <div class="org-selector-container"><label for="memberOrgSelector" style="display: block; margin-bottom: 10px; font-weight: 600;">Select Organization:</label> <select id="memberOrgSelector" style="width: 100%; max-width: 500px; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px;"> <option value="">Choose an organization...</option> </select>
+      </div>
+      <div id="memberRolesContent" style="display: none;">
+       <h3 style="margin-bottom: 20px;">Members in <span id="selectedOrgName" style="color: #667eea;"></span></h3>
+       <div class="filter-group"><input type="text" id="memberSearch" class="search-box" placeholder="🔍 Search members..."> <select id="memberRoleFilter"> <option value="all">All Roles</option> <option value="President">President</option> <option value="Vice President">Vice President</option> <option value="Secretary">Secretary</option> <option value="Treasurer">Treasurer</option> <option value="Officer">Officer</option> <option value="Member">Member</option> </select>
+       </div>
+       <div class="loading-spinner" id="membersLoading">
+        <div class="spinner"></div>
+        <p>Loading members...</p>
+       </div>
+       <div id="membersList"></div>
+      </div>
+      <div id="noOrgSelected" style="text-align: center; padding: 60px 20px; color: #999;">
+       <div style="font-size: 64px; margin-bottom: 20px;">
+        🏛️
+       </div>
+       <p>Select an organization above to manage member roles</p>
       </div>
      </div>
     </div><!-- Audit Logs Tab -->
@@ -918,6 +986,8 @@
     let allUsers = [];
     let allOrgs = [];
     let allAuditLogs = [];
+    let currentSelectedOrg = null;
+    let allMembers = [];
 
     // Check session on load
     window.addEventListener('load', () => {
@@ -1018,6 +1088,7 @@
       loadOverview();
       loadSystemHealth();
       populateOrgFilter();
+      populateMemberOrgSelector();
     }
 
     // Load statistics
@@ -1204,6 +1275,245 @@
       });
 
       displayOrganizations(filtered);
+    }
+
+    // Member Role Management
+    function populateMemberOrgSelector() {
+      const selector = document.getElementById('memberOrgSelector');
+      
+      db.ref('organizations').on('value', (snapshot) => {
+        const orgs = snapshot.val();
+        if (!orgs) return;
+
+        selector.innerHTML = '<option value="">Choose an organization...</option>';
+        
+        Object.entries(orgs).forEach(([orgId, org]) => {
+          const option = document.createElement('option');
+          option.value = orgId;
+          option.textContent = `${org.name} (${org.members ? Object.keys(org.members).length : 0} members)`;
+          selector.appendChild(option);
+        });
+      });
+    }
+
+    document.getElementById('memberOrgSelector').addEventListener('change', (e) => {
+      const orgId = e.target.value;
+      
+      if (!orgId) {
+        document.getElementById('memberRolesContent').style.display = 'none';
+        document.getElementById('noOrgSelected').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('noOrgSelected').style.display = 'none';
+      document.getElementById('memberRolesContent').style.display = 'block';
+      
+      loadMembersForOrg(orgId);
+    });
+
+    async function loadMembersForOrg(orgId) {
+      const membersLoading = document.getElementById('membersLoading');
+      const membersList = document.getElementById('membersList');
+      
+      membersLoading.style.display = 'block';
+      membersList.innerHTML = '';
+
+      try {
+        const orgSnapshot = await db.ref(`organizations/${orgId}`).once('value');
+        const org = orgSnapshot.val();
+        
+        if (!org) {
+          membersLoading.style.display = 'none';
+          membersList.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">Organization not found</p>';
+          return;
+        }
+
+        currentSelectedOrg = { id: orgId, ...org };
+        document.getElementById('selectedOrgName').textContent = org.name;
+
+        if (!org.members) {
+          membersLoading.style.display = 'none';
+          membersList.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">No members in this organization</p>';
+          return;
+        }
+
+        // Get all user details
+        const usersSnapshot = await db.ref('users').once('value');
+        const allUsersData = usersSnapshot.val() || {};
+
+        allMembers = Object.entries(org.members).map(([userId, memberData]) => {
+          const userData = allUsersData[userId] || {};
+          return {
+            userId,
+            role: memberData.role || 'Member',
+            joinedAt: memberData.joinedAt || Date.now(),
+            name: userData.name || 'Unknown',
+            email: userData.email || 'N/A',
+            grade: userData.grade || 'N/A',
+            section: userData.section || 'N/A'
+          };
+        });
+
+        membersLoading.style.display = 'none';
+        displayMembers(allMembers);
+      } catch (error) {
+        membersLoading.style.display = 'none';
+        membersList.innerHTML = `<p style="color: #f44336; text-align: center; padding: 40px;">Error loading members: ${error.message}</p>`;
+      }
+    }
+
+    function displayMembers(members) {
+      const membersList = document.getElementById('membersList');
+      membersList.innerHTML = '';
+
+      if (members.length === 0) {
+        membersList.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">No members found</p>';
+        return;
+      }
+
+      members.forEach(member => {
+        const memberCard = document.createElement('div');
+        memberCard.className = 'member-card';
+        
+        const roleColor = getRoleColor(member.role);
+        const joinDate = new Date(member.joinedAt).toLocaleDateString();
+        
+        memberCard.innerHTML = `
+          <div class="member-info">
+            <h4>${member.name} <span class="badge" style="background: ${roleColor}; color: white;">${member.role}</span></h4>
+            <p><strong>Email:</strong> ${member.email}</p>
+            <p><strong>Grade:</strong> ${member.grade} | <strong>Section:</strong> ${member.section}</p>
+            <p style="font-size: 12px; color: #999;">Joined: ${joinDate}</p>
+          </div>
+          <div class="member-actions">
+            <button class="btn-secondary" onclick="changeRole('${member.userId}', '${member.role}')">🔄 Change Role</button>
+            <button class="btn-danger" onclick="removeMember('${member.userId}', '${member.name}')">❌ Remove</button>
+          </div>
+        `;
+        
+        membersList.appendChild(memberCard);
+      });
+    }
+
+    function getRoleColor(role) {
+      const colors = {
+        'President': '#f44336',
+        'Vice President': '#ff9800',
+        'Secretary': '#2196f3',
+        'Treasurer': '#4caf50',
+        'Officer': '#9c27b0',
+        'Member': '#607d8b'
+      };
+      return colors[role] || '#607d8b';
+    }
+
+    // Member filters
+    document.getElementById('memberSearch').addEventListener('input', filterMembers);
+    document.getElementById('memberRoleFilter').addEventListener('change', filterMembers);
+
+    function filterMembers() {
+      const searchTerm = document.getElementById('memberSearch').value.toLowerCase();
+      const roleFilter = document.getElementById('memberRoleFilter').value;
+
+      let filtered = allMembers.filter(member => {
+        const matchesSearch = member.name.toLowerCase().includes(searchTerm) ||
+                            member.email.toLowerCase().includes(searchTerm);
+        
+        const matchesRole = roleFilter === 'all' || member.role === roleFilter;
+        
+        return matchesSearch && matchesRole;
+      });
+
+      displayMembers(filtered);
+    }
+
+    // Change member role
+    async function changeRole(userId, currentRole) {
+      if (!currentSelectedOrg) return;
+
+      const roles = ['President', 'Vice President', 'Secretary', 'Treasurer', 'Officer', 'Member'];
+      
+      const modal = document.createElement('div');
+      modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 20px;';
+      
+      const content = document.createElement('div');
+      content.style.cssText = 'background: white; padding: 40px; border-radius: 20px; max-width: 500px; width: 100%;';
+      
+      content.innerHTML = `
+        <h3 style="margin-bottom: 20px;">Change Member Role</h3>
+        <p style="margin-bottom: 20px; color: #666;">Current role: <strong>${currentRole}</strong></p>
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; margin-bottom: 10px; font-weight: 600;">Select New Role:</label>
+          <select id="newRoleSelect" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px;">
+            ${roles.map(role => `<option value="${role}" ${role === currentRole ? 'selected' : ''}>${role}</option>`).join('')}
+          </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button id="confirmRoleChange" class="btn-primary" style="width: auto; padding: 12px 24px;">Save Changes</button>
+          <button id="cancelRoleChange" class="btn-secondary" style="width: auto; padding: 12px 24px;">Cancel</button>
+        </div>
+      `;
+      
+      modal.appendChild(content);
+      document.body.appendChild(modal);
+      
+      document.getElementById('confirmRoleChange').onclick = async () => {
+        const newRole = document.getElementById('newRoleSelect').value;
+        
+        try {
+          await db.ref(`organizations/${currentSelectedOrg.id}/members/${userId}/role`).set(newRole);
+          showSuccess(`Role updated to ${newRole}`);
+          loadMembersForOrg(currentSelectedOrg.id);
+        } catch (error) {
+          showError('Failed to update role: ' + error.message);
+        } finally {
+          document.body.removeChild(modal);
+        }
+      };
+      
+      document.getElementById('cancelRoleChange').onclick = () => {
+        document.body.removeChild(modal);
+      };
+    }
+
+    // Remove member
+    async function removeMember(userId, memberName) {
+      if (!currentSelectedOrg) return;
+
+      const modal = document.createElement('div');
+      modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 20px;';
+      
+      const content = document.createElement('div');
+      content.style.cssText = 'background: white; padding: 40px; border-radius: 20px; max-width: 500px; width: 100%;';
+      
+      content.innerHTML = `
+        <h3 style="margin-bottom: 20px;">❌ Remove Member?</h3>
+        <p style="margin-bottom: 20px; color: #666;">Are you sure you want to remove <strong>${memberName}</strong> from <strong>${currentSelectedOrg.name}</strong>?</p>
+        <p style="margin-bottom: 20px; color: #f44336; font-size: 14px;">This action cannot be undone.</p>
+        <div style="display: flex; gap: 10px;">
+          <button id="confirmRemoveMember" class="btn-danger" style="width: auto; padding: 12px 24px;">Remove Member</button>
+          <button id="cancelRemoveMember" class="btn-secondary" style="width: auto; padding: 12px 24px;">Cancel</button>
+        </div>
+      `;
+      
+      modal.appendChild(content);
+      document.body.appendChild(modal);
+      
+      document.getElementById('confirmRemoveMember').onclick = async () => {
+        try {
+          await db.ref(`organizations/${currentSelectedOrg.id}/members/${userId}`).remove();
+          showSuccess(`${memberName} removed from organization`);
+          loadMembersForOrg(currentSelectedOrg.id);
+        } catch (error) {
+          showError('Failed to remove member: ' + error.message);
+        } finally {
+          document.body.removeChild(modal);
+        }
+      };
+      
+      document.getElementById('cancelRemoveMember').onclick = () => {
+        document.body.removeChild(modal);
+      };
     }
 
     // Load audit logs
@@ -1842,6 +2152,8 @@
     window.approveOrg = approveOrg;
     window.deleteOrg = deleteOrg;
     window.viewOrgDetails = viewOrgDetails;
+    window.changeRole = changeRole;
+    window.removeMember = removeMember;
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a30eb5137c48823',t:'MTc2MzkwMzU1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a30f95a83bac61e',t:'MTc2MzkwNDEzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
