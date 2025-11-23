@@ -1,0 +1,1847 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVSU Admin Dashboard</title>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100%;
+      color: #333;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Auth Section */
+    #authSection {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: white;
+      border-radius: 20px;
+      padding: 50px 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 450px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .auth-logo {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .auth-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .auth-subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .error-message {
+      background: #fee;
+      color: #c33;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    .success-message {
+      background: #efe;
+      color: #3c3;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      display: none;
+    }
+
+    /* Main Dashboard */
+    #adminDashboard {
+      display: none;
+    }
+
+    .header {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-logo {
+      font-size: 48px;
+    }
+
+    .header-text h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 5px;
+    }
+
+    .header-text p {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-email {
+      font-size: 14px;
+      color: #666;
+      font-weight: 600;
+    }
+
+    .admin-badge {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .btn-logout {
+      padding: 10px 20px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: #d32f2f;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .stat-card.users::before {
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .stat-card.orgs::before {
+      background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .stat-card.events::before {
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .stat-card.files::before {
+      background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .stat-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #999;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tabs-container {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow-x: auto;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: white;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .tab:hover {
+      border-color: #667eea;
+      transform: translateY(-2px);
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .table th, .table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .table th {
+      background: #f5f7fa;
+      font-weight: 600;
+      color: #333;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .table tr:hover {
+      background: #f8f9ff;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .badge-warning {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .badge-danger {
+      background: #fee;
+      color: #c33;
+    }
+
+    .badge-info {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .btn-secondary {
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-right: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: #5568d3;
+    }
+
+    .btn-success {
+      padding: 8px 16px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-success:hover {
+      background: #45a049;
+    }
+
+    .btn-danger {
+      padding: 8px 16px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    .btn-warning {
+      padding: 8px 16px;
+      background: #ff9800;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-warning:hover {
+      background: #f57c00;
+    }
+
+    .loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .search-box {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .audit-log-item {
+      background: #f5f7fa;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+      border-left: 4px solid #667eea;
+    }
+
+    .audit-log-item .action {
+      font-weight: 600;
+      color: #333;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .audit-log-item .description {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .audit-log-item .meta {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .json-viewer {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      white-space: pre;
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group select, .filter-group input {
+      padding: 10px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+      background: none;
+      border: none;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .header-left {
+        flex-direction: column;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .table {
+        font-size: 12px;
+      }
+
+      .table th, .table td {
+        padding: 10px;
+      }
+
+      .filter-group {
+        flex-direction: column;
+      }
+
+      .filter-group select, .filter-group input {
+        width: 100%;
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Auth Section -->
+  <div id="authSection">
+   <div class="auth-card">
+    <div class="auth-logo">
+     🛡️
+    </div>
+    <h1 class="auth-title">Admin Portal</h1>
+    <p class="auth-subtitle">CVSU Organization Management System</p>
+    <div class="error-message" id="authError"></div>
+    <div class="success-message" id="authSuccess"></div>
+    <form id="adminLoginForm">
+     <div class="form-group"><label for="adminEmail">Admin Email</label> <input type="email" id="adminEmail" placeholder="admin@cvsu.edu.ph" required>
+     </div>
+     <div class="form-group"><label for="adminPassword">Password</label> <input type="password" id="adminPassword" placeholder="Enter admin password" required>
+     </div><button type="submit" class="btn-primary" id="adminLoginBtn">Admin Login</button>
+    </form>
+   </div>
+  </div><!-- Admin Dashboard -->
+  <div id="adminDashboard">
+   <div class="container">
+    <div class="header">
+     <div class="header-left">
+      <div class="header-logo">
+       🛡️
+      </div>
+      <div class="header-text">
+       <h1>Admin Dashboard</h1>
+       <p>Complete system oversight and management</p>
+      </div>
+     </div>
+     <div class="header-right">
+      <div>
+       <div class="user-email" id="displayAdminEmail"></div><span class="admin-badge">SUPER ADMIN</span>
+      </div><button class="btn-logout" id="logoutBtn">Logout</button>
+     </div>
+    </div><!-- Statistics -->
+    <div class="stats-grid">
+     <div class="stat-card users">
+      <div class="stat-icon">
+       👥
+      </div>
+      <div class="stat-number" id="totalUsers">
+       0
+      </div>
+      <div class="stat-label">
+       Total Users
+      </div>
+     </div>
+     <div class="stat-card orgs">
+      <div class="stat-icon">
+       🏛️
+      </div>
+      <div class="stat-number" id="totalOrgs">
+       0
+      </div>
+      <div class="stat-label">
+       Organizations
+      </div>
+     </div>
+     <div class="stat-card events">
+      <div class="stat-icon">
+       📅
+      </div>
+      <div class="stat-number" id="totalEvents">
+       0
+      </div>
+      <div class="stat-label">
+       Total Events
+      </div>
+     </div>
+     <div class="stat-card files">
+      <div class="stat-icon">
+       📁
+      </div>
+      <div class="stat-number" id="totalFiles">
+       0
+      </div>
+      <div class="stat-label">
+       Total Files
+      </div>
+     </div>
+    </div><!-- Tabs -->
+    <div class="tabs-container">
+     <div class="tabs"><button class="tab active" data-tab="overview">📊 Overview</button> <button class="tab" data-tab="users">👥 Users</button> <button class="tab" data-tab="organizations">🏛️ Organizations</button> <button class="tab" data-tab="auditLogs">📋 Audit Logs</button> <button class="tab" data-tab="database">💾 Database</button> <button class="tab" data-tab="systemHealth">🏥 System Health</button>
+     </div>
+    </div><!-- Overview Tab -->
+    <div class="tab-content active" id="overview">
+     <div class="card">
+      <h2>📊 System Overview</h2>
+      <h3 style="margin-top: 30px; margin-bottom: 15px;">Pending Approvals</h3>
+      <div id="pendingApprovals"></div>
+      <h3 style="margin-top: 30px; margin-bottom: 15px;">Recent Activity</h3>
+      <div id="recentActivity"></div>
+     </div>
+    </div><!-- Users Tab -->
+    <div class="tab-content" id="users">
+     <div class="card">
+      <h2>👥 User Management</h2>
+      <div class="filter-group"><input type="text" id="userSearch" class="search-box" placeholder="🔍 Search users by email or name..."> <select id="userStatusFilter"> <option value="all">All Status</option> <option value="approved">Approved</option> <option value="pending">Pending Approval</option> </select> <select id="userAdminFilter"> <option value="all">All Users</option> <option value="admin">Admins Only</option> <option value="regular">Regular Users</option> </select>
+      </div>
+      <div class="loading-spinner" id="usersLoading">
+       <div class="spinner"></div>
+       <p>Loading users...</p>
+      </div>
+      <div class="table-container">
+       <table class="table" id="usersTable">
+        <thead>
+         <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Grade</th>
+          <th>Section</th>
+          <th>Status</th>
+          <th>Admin</th>
+          <th>Created</th>
+          <th>Actions</th>
+         </tr>
+        </thead>
+        <tbody id="usersTableBody"></tbody>
+       </table>
+      </div>
+     </div>
+    </div><!-- Organizations Tab -->
+    <div class="tab-content" id="organizations">
+     <div class="card">
+      <h2>🏛️ Organization Management</h2>
+      <div class="filter-group"><input type="text" id="orgSearch" class="search-box" placeholder="🔍 Search organizations..."> <select id="orgStatusFilter"> <option value="all">All Status</option> <option value="approved">Approved</option> <option value="pending">Pending Approval</option> </select> <select id="orgTypeFilter"> <option value="all">All Types</option> <option value="club">Club</option> <option value="society">Society</option> <option value="committee">Committee</option> <option value="association">Association</option> <option value="other">Other</option> </select>
+      </div>
+      <div class="loading-spinner" id="orgsLoading">
+       <div class="spinner"></div>
+       <p>Loading organizations...</p>
+      </div>
+      <div class="table-container">
+       <table class="table" id="orgsTable">
+        <thead>
+         <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Members</th>
+          <th>Status</th>
+          <th>Created By</th>
+          <th>Created</th>
+          <th>Actions</th>
+         </tr>
+        </thead>
+        <tbody id="orgsTableBody"></tbody>
+       </table>
+      </div>
+     </div>
+    </div><!-- Audit Logs Tab -->
+    <div class="tab-content" id="auditLogs">
+     <div class="card">
+      <h2>📋 System Audit Logs</h2>
+      <div class="filter-group"><input type="text" id="auditSearch" class="search-box" placeholder="🔍 Search logs..."> <select id="auditOrgFilter"> <option value="all">All Organizations</option> </select> <button class="btn-secondary" id="exportAuditBtn">📥 Export CSV</button> <button class="btn-danger" id="clearAuditBtn">🗑️ Clear Logs</button>
+      </div>
+      <div class="loading-spinner" id="auditLoading">
+       <div class="spinner"></div>
+       <p>Loading audit logs...</p>
+      </div>
+      <div id="auditLogsList"></div>
+     </div>
+    </div><!-- Database Tab -->
+    <div class="tab-content" id="database">
+     <div class="card">
+      <h2>💾 Database Explorer</h2>
+      <div class="filter-group"><select id="dbNodeSelector"> <option value="">Select a node...</option> <option value="users">Users</option> <option value="organizations">Organizations</option> </select> <button class="btn-secondary" id="refreshDbBtn">🔄 Refresh</button> <button class="btn-warning" id="exportDbBtn">📥 Export JSON</button>
+      </div>
+      <div class="loading-spinner" id="dbLoading">
+       <div class="spinner"></div>
+       <p>Loading database...</p>
+      </div>
+      <div id="dbViewer" class="json-viewer"></div>
+     </div>
+    </div><!-- System Health Tab -->
+    <div class="tab-content" id="systemHealth">
+     <div class="card">
+      <h2>🏥 System Health &amp; Statistics</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+       <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px;">
+        <h3 style="margin-bottom: 15px;">👥 User Statistics</h3>
+        <p>Total Users: <strong id="healthTotalUsers">0</strong></p>
+        <p>Approved Users: <strong id="healthApprovedUsers">0</strong></p>
+        <p>Pending Users: <strong id="healthPendingUsers">0</strong></p>
+        <p>Admin Users: <strong id="healthAdminUsers">0</strong></p>
+       </div>
+       <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px;">
+        <h3 style="margin-bottom: 15px;">🏛️ Organization Statistics</h3>
+        <p>Total Organizations: <strong id="healthTotalOrgs">0</strong></p>
+        <p>Approved Orgs: <strong id="healthApprovedOrgs">0</strong></p>
+        <p>Pending Orgs: <strong id="healthPendingOrgs">0</strong></p>
+        <p>Average Members: <strong id="healthAvgMembers">0</strong></p>
+       </div>
+       <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 30px; border-radius: 15px;">
+        <h3 style="margin-bottom: 15px;">📊 Content Statistics</h3>
+        <p>Total Events: <strong id="healthTotalEvents">0</strong></p>
+        <p>Total Files: <strong id="healthTotalFiles">0</strong></p>
+        <p>Total Announcements: <strong id="healthTotalAnnouncements">0</strong></p>
+        <p>Total Audit Logs: <strong id="healthTotalAuditLogs">0</strong></p>
+       </div>
+       <div style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; padding: 30px; border-radius: 15px;">
+        <h3 style="margin-bottom: 15px;">💰 Financial Overview</h3>
+        <p>Total Income: <strong id="healthTotalIncome">₱0</strong></p>
+        <p>Total Expenses: <strong id="healthTotalExpenses">₱0</strong></p>
+        <p>Net Balance: <strong id="healthNetBalance">₱0</strong></p>
+        <p>Transactions: <strong id="healthTotalTransactions">0</strong></p>
+       </div>
+      </div>
+      <div style="margin-top: 40px;">
+       <h3 style="margin-bottom: 20px;">🔧 System Actions</h3><button class="btn-warning" id="backupDbBtn">💾 Backup Database</button> <button class="btn-secondary" id="generateReportBtn">📊 Generate Report</button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- View Details Modal -->
+  <div class="modal" id="detailsModal">
+   <div class="modal-content"><button class="modal-close" id="closeDetailsModal">×</button>
+    <h2 id="detailsModalTitle">Details</h2>
+    <div id="detailsModalContent"></div>
+   </div>
+  </div><!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script>
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAK_41CRZM1pt5zTNqMzy_WdrZu1g8fKks",
+      authDomain: "org-organizer.firebaseapp.com",
+      databaseURL: "https://org-organizer-default-rtdb.firebaseio.com",
+      projectId: "org-organizer",
+      storageBucket: "org-organizer.firebasestorage.app",
+      messagingSenderId: "971435967798",
+      appId: "1:971435967798:web:969835f265d9ee4f879f97",
+      measurementId: "G-STG68DJDWF"
+    };
+
+    // Admin Credentials
+    const ADMIN_CREDENTIALS = {
+      email: 'arhanmeir.obrero@gmail.com',
+      password: 'Athanmeir@1'
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Global state
+    let isAdminLoggedIn = false;
+    let allUsers = [];
+    let allOrgs = [];
+    let allAuditLogs = [];
+
+    // Check session on load
+    window.addEventListener('load', () => {
+      const adminSession = sessionStorage.getItem('adminLoggedIn');
+      if (adminSession === 'true') {
+        isAdminLoggedIn = true;
+        showDashboard();
+      } else {
+        showAuthSection();
+      }
+    });
+
+    function showAuthSection() {
+      document.getElementById('authSection').style.display = 'flex';
+      document.getElementById('adminDashboard').style.display = 'none';
+    }
+
+    function showDashboard() {
+      document.getElementById('authSection').style.display = 'none';
+      document.getElementById('adminDashboard').style.display = 'block';
+      document.getElementById('displayAdminEmail').textContent = ADMIN_CREDENTIALS.email;
+      
+      loadAllData();
+    }
+
+    function showError(message) {
+      const authError = document.getElementById('authError');
+      authError.textContent = message;
+      authError.style.display = 'block';
+      setTimeout(() => {
+        authError.style.display = 'none';
+      }, 5000);
+    }
+
+    function showSuccess(message) {
+      const authSuccess = document.getElementById('authSuccess');
+      authSuccess.textContent = message;
+      authSuccess.style.display = 'block';
+      setTimeout(() => {
+        authSuccess.style.display = 'none';
+      }, 3000);
+    }
+
+    // Login
+    document.getElementById('adminLoginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+      const btn = document.getElementById('adminLoginBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Logging in...';
+
+      setTimeout(() => {
+        if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+          isAdminLoggedIn = true;
+          sessionStorage.setItem('adminLoggedIn', 'true');
+          showDashboard();
+          showSuccess('Login successful!');
+        } else {
+          showError('Invalid admin credentials');
+        }
+        
+        btn.disabled = false;
+        btn.textContent = 'Admin Login';
+      }, 500);
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      isAdminLoggedIn = false;
+      sessionStorage.removeItem('adminLoggedIn');
+      showAuthSection();
+      showSuccess('Logged out successfully');
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+
+    // Load all data
+    function loadAllData() {
+      loadStatistics();
+      loadUsers();
+      loadOrganizations();
+      loadAuditLogs();
+      loadOverview();
+      loadSystemHealth();
+      populateOrgFilter();
+    }
+
+    // Load statistics
+    async function loadStatistics() {
+      const usersSnapshot = await db.ref('users').once('value');
+      const orgsSnapshot = await db.ref('organizations').once('value');
+      
+      const users = usersSnapshot.val() || {};
+      const orgs = orgsSnapshot.val() || {};
+      
+      document.getElementById('totalUsers').textContent = Object.keys(users).length;
+      document.getElementById('totalOrgs').textContent = Object.keys(orgs).length;
+      
+      let totalEvents = 0;
+      let totalFiles = 0;
+      
+      for (const org of Object.values(orgs)) {
+        if (org.events) totalEvents += Object.keys(org.events).length;
+        if (org.files) totalFiles += Object.keys(org.files).length;
+      }
+      
+      document.getElementById('totalEvents').textContent = totalEvents;
+      document.getElementById('totalFiles').textContent = totalFiles;
+    }
+
+    // Load users
+    function loadUsers() {
+      const usersLoading = document.getElementById('usersLoading');
+      const usersTableBody = document.getElementById('usersTableBody');
+      
+      usersLoading.style.display = 'block';
+      usersTableBody.innerHTML = '';
+
+      db.ref('users').on('value', (snapshot) => {
+        usersLoading.style.display = 'none';
+        usersTableBody.innerHTML = '';
+        
+        const users = snapshot.val();
+        if (!users) {
+          usersTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No users found</td></tr>';
+          return;
+        }
+
+        allUsers = Object.entries(users).map(([uid, user]) => ({ uid, ...user }));
+        displayUsers(allUsers);
+      });
+    }
+
+    function displayUsers(users) {
+      const usersTableBody = document.getElementById('usersTableBody');
+      usersTableBody.innerHTML = '';
+
+      users.forEach(user => {
+        const row = document.createElement('tr');
+        const statusBadge = user.approved === false ? 
+          '<span class="badge badge-warning">Pending</span>' : 
+          '<span class="badge badge-success">Approved</span>';
+        const adminBadge = user.isHeadAdmin ? 
+          '<span class="badge badge-danger">Yes</span>' : 
+          '<span class="badge badge-info">No</span>';
+        const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+        
+        row.innerHTML = `
+          <td>${user.name || 'N/A'}</td>
+          <td>${user.email}</td>
+          <td>${user.grade || 'N/A'}</td>
+          <td>${user.section || 'N/A'}</td>
+          <td>${statusBadge}</td>
+          <td>${adminBadge}</td>
+          <td>${createdDate}</td>
+          <td class="action-buttons">
+            ${user.approved === false ? `<button class="btn-success" onclick="approveUser('${user.uid}')">✅ Approve</button>` : ''}
+            <button class="btn-secondary" onclick="viewUserDetails('${user.uid}')">👁️ View</button>
+            ${!user.isHeadAdmin ? `<button class="btn-warning" onclick="toggleAdmin('${user.uid}', ${user.isHeadAdmin || false})">🛡️ Admin</button>` : ''}
+            <button class="btn-danger" onclick="deleteUser('${user.uid}')">🗑️ Delete</button>
+          </td>
+        `;
+        usersTableBody.appendChild(row);
+      });
+    }
+
+    // User filters
+    document.getElementById('userSearch').addEventListener('input', filterUsers);
+    document.getElementById('userStatusFilter').addEventListener('change', filterUsers);
+    document.getElementById('userAdminFilter').addEventListener('change', filterUsers);
+
+    function filterUsers() {
+      const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+      const statusFilter = document.getElementById('userStatusFilter').value;
+      const adminFilter = document.getElementById('userAdminFilter').value;
+
+      let filtered = allUsers.filter(user => {
+        const matchesSearch = user.email.toLowerCase().includes(searchTerm) || 
+                            (user.name && user.name.toLowerCase().includes(searchTerm));
+        
+        const matchesStatus = statusFilter === 'all' || 
+                            (statusFilter === 'approved' && user.approved !== false) ||
+                            (statusFilter === 'pending' && user.approved === false);
+        
+        const matchesAdmin = adminFilter === 'all' ||
+                           (adminFilter === 'admin' && user.isHeadAdmin) ||
+                           (adminFilter === 'regular' && !user.isHeadAdmin);
+        
+        return matchesSearch && matchesStatus && matchesAdmin;
+      });
+
+      displayUsers(filtered);
+    }
+
+    // Load organizations
+    function loadOrganizations() {
+      const orgsLoading = document.getElementById('orgsLoading');
+      const orgsTableBody = document.getElementById('orgsTableBody');
+      
+      orgsLoading.style.display = 'block';
+      orgsTableBody.innerHTML = '';
+
+      db.ref('organizations').on('value', (snapshot) => {
+        orgsLoading.style.display = 'none';
+        orgsTableBody.innerHTML = '';
+        
+        const orgs = snapshot.val();
+        if (!orgs) {
+          orgsTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px;">No organizations found</td></tr>';
+          return;
+        }
+
+        allOrgs = Object.entries(orgs).map(([id, org]) => ({ id, ...org }));
+        displayOrganizations(allOrgs);
+      });
+    }
+
+    function displayOrganizations(orgs) {
+      const orgsTableBody = document.getElementById('orgsTableBody');
+      orgsTableBody.innerHTML = '';
+
+      orgs.forEach(org => {
+        const row = document.createElement('tr');
+        const statusBadge = org.approved === false ? 
+          '<span class="badge badge-warning">Pending</span>' : 
+          '<span class="badge badge-success">Approved</span>';
+        const memberCount = org.members ? Object.keys(org.members).length : 0;
+        const createdDate = org.createdAt ? new Date(org.createdAt).toLocaleDateString() : 'N/A';
+        
+        row.innerHTML = `
+          <td><strong>${org.name}</strong></td>
+          <td>${org.type || 'N/A'}</td>
+          <td>${org.description ? org.description.substring(0, 50) + '...' : 'N/A'}</td>
+          <td>${memberCount}</td>
+          <td>${statusBadge}</td>
+          <td>${org.createdBy || 'System'}</td>
+          <td>${createdDate}</td>
+          <td class="action-buttons">
+            ${org.approved === false ? `<button class="btn-success" onclick="approveOrg('${org.id}')">✅ Approve</button>` : ''}
+            <button class="btn-secondary" onclick="viewOrgDetails('${org.id}')">👁️ View</button>
+            <button class="btn-danger" onclick="deleteOrg('${org.id}')">🗑️ Delete</button>
+          </td>
+        `;
+        orgsTableBody.appendChild(row);
+      });
+    }
+
+    // Organization filters
+    document.getElementById('orgSearch').addEventListener('input', filterOrgs);
+    document.getElementById('orgStatusFilter').addEventListener('change', filterOrgs);
+    document.getElementById('orgTypeFilter').addEventListener('change', filterOrgs);
+
+    function filterOrgs() {
+      const searchTerm = document.getElementById('orgSearch').value.toLowerCase();
+      const statusFilter = document.getElementById('orgStatusFilter').value;
+      const typeFilter = document.getElementById('orgTypeFilter').value;
+
+      let filtered = allOrgs.filter(org => {
+        const matchesSearch = org.name.toLowerCase().includes(searchTerm) ||
+                            (org.description && org.description.toLowerCase().includes(searchTerm));
+        
+        const matchesStatus = statusFilter === 'all' || 
+                            (statusFilter === 'approved' && org.approved !== false) ||
+                            (statusFilter === 'pending' && org.approved === false);
+        
+        const matchesType = typeFilter === 'all' || org.type === typeFilter;
+        
+        return matchesSearch && matchesStatus && matchesType;
+      });
+
+      displayOrganizations(filtered);
+    }
+
+    // Load audit logs
+    function loadAuditLogs() {
+      const auditLoading = document.getElementById('auditLoading');
+      const auditLogsList = document.getElementById('auditLogsList');
+      
+      auditLoading.style.display = 'block';
+      auditLogsList.innerHTML = '';
+
+      db.ref('organizations').on('value', (snapshot) => {
+        auditLoading.style.display = 'none';
+        auditLogsList.innerHTML = '';
+        
+        const orgs = snapshot.val();
+        if (!orgs) {
+          auditLogsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No audit logs found</p></div>';
+          return;
+        }
+
+        allAuditLogs = [];
+        
+        Object.entries(orgs).forEach(([orgId, org]) => {
+          if (org.audit_logs) {
+            Object.entries(org.audit_logs).forEach(([logId, log]) => {
+              allAuditLogs.push({
+                orgId,
+                orgName: org.name,
+                logId,
+                ...log
+              });
+            });
+          }
+        });
+
+        allAuditLogs.sort((a, b) => b.timestamp - a.timestamp);
+        displayAuditLogs(allAuditLogs.slice(0, 100));
+      });
+    }
+
+    function displayAuditLogs(logs) {
+      const auditLogsList = document.getElementById('auditLogsList');
+      auditLogsList.innerHTML = '';
+
+      if (logs.length === 0) {
+        auditLogsList.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No audit logs found</p></div>';
+        return;
+      }
+
+      logs.forEach(log => {
+        const date = new Date(log.timestamp);
+        const item = document.createElement('div');
+        item.className = 'audit-log-item';
+        item.innerHTML = `
+          <div class="action">${log.action}</div>
+          <div class="description">${log.description}</div>
+          <div class="meta">
+            <span>🏛️ ${log.orgName}</span>
+            <span>🕐 ${date.toLocaleString()}</span>
+          </div>
+        `;
+        auditLogsList.appendChild(item);
+      });
+    }
+
+    function populateOrgFilter() {
+      const auditOrgFilter = document.getElementById('auditOrgFilter');
+      
+      db.ref('organizations').once('value', (snapshot) => {
+        const orgs = snapshot.val();
+        if (!orgs) return;
+
+        auditOrgFilter.innerHTML = '<option value="all">All Organizations</option>';
+        
+        Object.entries(orgs).forEach(([orgId, org]) => {
+          const option = document.createElement('option');
+          option.value = orgId;
+          option.textContent = org.name;
+          auditOrgFilter.appendChild(option);
+        });
+      });
+    }
+
+    document.getElementById('auditSearch').addEventListener('input', filterAuditLogs);
+    document.getElementById('auditOrgFilter').addEventListener('change', filterAuditLogs);
+
+    function filterAuditLogs() {
+      const searchTerm = document.getElementById('auditSearch').value.toLowerCase();
+      const orgFilter = document.getElementById('auditOrgFilter').value;
+
+      let filtered = allAuditLogs.filter(log => {
+        const matchesSearch = log.action.toLowerCase().includes(searchTerm) ||
+                            log.description.toLowerCase().includes(searchTerm);
+        
+        const matchesOrg = orgFilter === 'all' || log.orgId === orgFilter;
+        
+        return matchesSearch && matchesOrg;
+      });
+
+      displayAuditLogs(filtered.slice(0, 100));
+    }
+
+    // Load overview
+    function loadOverview() {
+      const pendingApprovals = document.getElementById('pendingApprovals');
+      const recentActivity = document.getElementById('recentActivity');
+
+      pendingApprovals.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      recentActivity.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+      Promise.all([
+        db.ref('users').once('value'),
+        db.ref('organizations').once('value')
+      ]).then(([usersSnapshot, orgsSnapshot]) => {
+        const users = usersSnapshot.val() || {};
+        const orgs = orgsSnapshot.val() || {};
+
+        const pendingUsers = Object.entries(users).filter(([_, user]) => user.approved === false);
+        const pendingOrgs = Object.entries(orgs).filter(([_, org]) => org.approved === false);
+
+        if (pendingUsers.length === 0 && pendingOrgs.length === 0) {
+          pendingApprovals.innerHTML = '<p style="color: #999;">No pending approvals</p>';
+        } else {
+          let html = '';
+          
+          pendingUsers.forEach(([uid, user]) => {
+            html += `
+              <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                <strong>👤 User:</strong> ${user.email} (${user.name || 'N/A'})
+                <button class="btn-success" onclick="approveUser('${uid}')" style="margin-left: 10px;">✅ Approve</button>
+              </div>
+            `;
+          });
+
+          pendingOrgs.forEach(([orgId, org]) => {
+            html += `
+              <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                <strong>🏛️ Organization:</strong> ${org.name} (${org.type || 'N/A'})
+                <button class="btn-success" onclick="approveOrg('${orgId}')" style="margin-left: 10px;">✅ Approve</button>
+              </div>
+            `;
+          });
+
+          pendingApprovals.innerHTML = html;
+        }
+
+        const allLogs = [];
+        Object.entries(orgs).forEach(([orgId, org]) => {
+          if (org.audit_logs) {
+            Object.values(org.audit_logs).forEach(log => {
+              allLogs.push({ orgName: org.name, ...log });
+            });
+          }
+        });
+
+        allLogs.sort((a, b) => b.timestamp - a.timestamp);
+        const recent = allLogs.slice(0, 10);
+
+        if (recent.length === 0) {
+          recentActivity.innerHTML = '<p style="color: #999;">No recent activity</p>';
+        } else {
+          let html = '';
+          recent.forEach(log => {
+            const date = new Date(log.timestamp);
+            html += `
+              <div style="background: #f5f7fa; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #667eea;">
+                <strong>${log.action}</strong> - ${log.orgName}<br>
+                <span style="color: #666; font-size: 14px;">${log.description}</span><br>
+                <span style="color: #999; font-size: 12px;">${date.toLocaleString()}</span>
+              </div>
+            `;
+          });
+          recentActivity.innerHTML = html;
+        }
+      });
+    }
+
+    // Load system health
+    function loadSystemHealth() {
+      Promise.all([
+        db.ref('users').once('value'),
+        db.ref('organizations').once('value')
+      ]).then(([usersSnapshot, orgsSnapshot]) => {
+        const users = usersSnapshot.val() || {};
+        const orgs = orgsSnapshot.val() || {};
+
+        const totalUsers = Object.keys(users).length;
+        const approvedUsers = Object.values(users).filter(u => u.approved !== false).length;
+        const pendingUsers = Object.values(users).filter(u => u.approved === false).length;
+        const adminUsers = Object.values(users).filter(u => u.isHeadAdmin).length;
+
+        document.getElementById('healthTotalUsers').textContent = totalUsers;
+        document.getElementById('healthApprovedUsers').textContent = approvedUsers;
+        document.getElementById('healthPendingUsers').textContent = pendingUsers;
+        document.getElementById('healthAdminUsers').textContent = adminUsers;
+
+        const totalOrgs = Object.keys(orgs).length;
+        const approvedOrgs = Object.values(orgs).filter(o => o.approved !== false).length;
+        const pendingOrgs = Object.values(orgs).filter(o => o.approved === false).length;
+
+        let totalMembers = 0;
+        let totalEvents = 0;
+        let totalFiles = 0;
+        let totalAnnouncements = 0;
+        let totalAuditLogs = 0;
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        let totalTransactions = 0;
+
+        Object.values(orgs).forEach(org => {
+          if (org.members) totalMembers += Object.keys(org.members).length;
+          if (org.events) totalEvents += Object.keys(org.events).length;
+          if (org.files) totalFiles += Object.keys(org.files).length;
+          if (org.announcements) totalAnnouncements += Object.keys(org.announcements).length;
+          if (org.audit_logs) totalAuditLogs += Object.keys(org.audit_logs).length;
+          
+          if (org.finance) {
+            Object.values(org.finance).forEach(transaction => {
+              totalTransactions++;
+              if (transaction.type === 'income') {
+                totalIncome += transaction.amount;
+              } else {
+                totalExpenses += transaction.amount;
+              }
+            });
+          }
+        });
+
+        const avgMembers = totalOrgs > 0 ? Math.round(totalMembers / totalOrgs) : 0;
+
+        document.getElementById('healthTotalOrgs').textContent = totalOrgs;
+        document.getElementById('healthApprovedOrgs').textContent = approvedOrgs;
+        document.getElementById('healthPendingOrgs').textContent = pendingOrgs;
+        document.getElementById('healthAvgMembers').textContent = avgMembers;
+
+        document.getElementById('healthTotalEvents').textContent = totalEvents;
+        document.getElementById('healthTotalFiles').textContent = totalFiles;
+        document.getElementById('healthTotalAnnouncements').textContent = totalAnnouncements;
+        document.getElementById('healthTotalAuditLogs').textContent = totalAuditLogs;
+
+        document.getElementById('healthTotalIncome').textContent = `₱${totalIncome.toFixed(2)}`;
+        document.getElementById('healthTotalExpenses').textContent = `₱${totalExpenses.toFixed(2)}`;
+        document.getElementById('healthNetBalance').textContent = `₱${(totalIncome - totalExpenses).toFixed(2)}`;
+        document.getElementById('healthTotalTransactions').textContent = totalTransactions;
+      });
+    }
+
+    // Database explorer
+    document.getElementById('dbNodeSelector').addEventListener('change', (e) => {
+      const node = e.target.value;
+      if (!node) return;
+
+      const dbLoading = document.getElementById('dbLoading');
+      const dbViewer = document.getElementById('dbViewer');
+
+      dbLoading.style.display = 'block';
+      dbViewer.textContent = '';
+
+      db.ref(node).once('value', (snapshot) => {
+        dbLoading.style.display = 'none';
+        const data = snapshot.val();
+        dbViewer.textContent = JSON.stringify(data, null, 2);
+      });
+    });
+
+    document.getElementById('refreshDbBtn').addEventListener('click', () => {
+      const node = document.getElementById('dbNodeSelector').value;
+      if (!node) {
+        showError('Please select a node first');
+        return;
+      }
+
+      document.getElementById('dbNodeSelector').dispatchEvent(new Event('change'));
+      showSuccess('Database refreshed');
+    });
+
+    document.getElementById('exportDbBtn').addEventListener('click', () => {
+      const node = document.getElementById('dbNodeSelector').value;
+      if (!node) {
+        showError('Please select a node first');
+        return;
+      }
+
+      db.ref(node).once('value', (snapshot) => {
+        const data = snapshot.val();
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${node}_export_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showSuccess('Database exported successfully');
+      });
+    });
+
+    // Export audit logs
+    document.getElementById('exportAuditBtn').addEventListener('click', () => {
+      if (allAuditLogs.length === 0) {
+        showError('No audit logs to export');
+        return;
+      }
+
+      let csv = 'Organization,Action,Description,Timestamp\n';
+      allAuditLogs.forEach(log => {
+        const date = new Date(log.timestamp).toISOString();
+        csv += `"${log.orgName}","${log.action}","${log.description}","${date}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `audit_logs_${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showSuccess('Audit logs exported');
+    });
+
+    // Clear audit logs
+    document.getElementById('clearAuditBtn').addEventListener('click', () => {
+      const confirmDiv = document.createElement('div');
+      confirmDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 10000;';
+      confirmDiv.innerHTML = `
+        <h3 style="margin-bottom: 15px;">⚠️ Clear All Audit Logs?</h3>
+        <p style="margin-bottom: 20px;">This action cannot be undone. All audit logs across all organizations will be permanently deleted.</p>
+        <button id="confirmClearAudit" class="btn-danger">Clear All Logs</button>
+        <button id="cancelClearAudit" class="btn-secondary" style="margin-left: 10px;">Cancel</button>
+      `;
+      
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;';
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(confirmDiv);
+      
+      document.getElementById('confirmClearAudit').onclick = async () => {
+        try {
+          const orgsSnapshot = await db.ref('organizations').once('value');
+          const orgs = orgsSnapshot.val() || {};
+          
+          for (const orgId of Object.keys(orgs)) {
+            await db.ref(`organizations/${orgId}/audit_logs`).remove();
+          }
+          
+          showSuccess('All audit logs cleared');
+        } catch (error) {
+          showError('Failed to clear logs: ' + error.message);
+        } finally {
+          document.body.removeChild(confirmDiv);
+          document.body.removeChild(overlay);
+        }
+      };
+      
+      document.getElementById('cancelClearAudit').onclick = () => {
+        document.body.removeChild(confirmDiv);
+        document.body.removeChild(overlay);
+      };
+    });
+
+    // User actions
+    async function approveUser(uid) {
+      try {
+        await db.ref(`users/${uid}/approved`).set(true);
+        showSuccess('User approved successfully');
+      } catch (error) {
+        showError('Failed to approve user: ' + error.message);
+      }
+    }
+
+    async function toggleAdmin(uid, currentStatus) {
+      const newStatus = !currentStatus;
+      const action = newStatus ? 'grant' : 'revoke';
+      
+      const confirmDiv = document.createElement('div');
+      confirmDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 10000;';
+      confirmDiv.innerHTML = `
+        <h3 style="margin-bottom: 15px;">${newStatus ? '🛡️ Grant' : '🚫 Revoke'} Admin Access?</h3>
+        <p style="margin-bottom: 20px;">Are you sure you want to ${action} admin privileges?</p>
+        <button id="confirmToggleAdmin" class="btn-warning">${action === 'grant' ? 'Grant' : 'Revoke'}</button>
+        <button id="cancelToggleAdmin" class="btn-secondary" style="margin-left: 10px;">Cancel</button>
+      `;
+      
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;';
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(confirmDiv);
+      
+      document.getElementById('confirmToggleAdmin').onclick = async () => {
+        try {
+          await db.ref(`users/${uid}/isHeadAdmin`).set(newStatus);
+          showSuccess(`Admin privileges ${action}ed successfully`);
+        } catch (error) {
+          showError(`Failed to ${action} admin privileges: ` + error.message);
+        } finally {
+          document.body.removeChild(confirmDiv);
+          document.body.removeChild(overlay);
+        }
+      };
+      
+      document.getElementById('cancelToggleAdmin').onclick = () => {
+        document.body.removeChild(confirmDiv);
+        document.body.removeChild(overlay);
+      };
+    }
+
+    async function deleteUser(uid) {
+      const confirmDiv = document.createElement('div');
+      confirmDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 10000;';
+      confirmDiv.innerHTML = `
+        <h3 style="margin-bottom: 15px;">🗑️ Delete User?</h3>
+        <p style="margin-bottom: 20px;">This will permanently delete the user and all their data. This action cannot be undone.</p>
+        <button id="confirmDeleteUser" class="btn-danger">Delete User</button>
+        <button id="cancelDeleteUser" class="btn-secondary" style="margin-left: 10px;">Cancel</button>
+      `;
+      
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;';
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(confirmDiv);
+      
+      document.getElementById('confirmDeleteUser').onclick = async () => {
+        try {
+          await db.ref(`users/${uid}`).remove();
+          showSuccess('User deleted successfully');
+        } catch (error) {
+          showError('Failed to delete user: ' + error.message);
+        } finally {
+          document.body.removeChild(confirmDiv);
+          document.body.removeChild(overlay);
+        }
+      };
+      
+      document.getElementById('cancelDeleteUser').onclick = () => {
+        document.body.removeChild(confirmDiv);
+        document.body.removeChild(overlay);
+      };
+    }
+
+    function viewUserDetails(uid) {
+      db.ref(`users/${uid}`).once('value', (snapshot) => {
+        const user = snapshot.val();
+        const modal = document.getElementById('detailsModal');
+        const title = document.getElementById('detailsModalTitle');
+        const content = document.getElementById('detailsModalContent');
+        
+        title.textContent = 'User Details';
+        content.innerHTML = `
+          <div style="background: #f5f7fa; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+            <p><strong>Name:</strong> ${user.name || 'N/A'}</p>
+            <p><strong>Email:</strong> ${user.email}</p>
+            <p><strong>Grade:</strong> ${user.grade || 'N/A'}</p>
+            <p><strong>Section:</strong> ${user.section || 'N/A'}</p>
+            <p><strong>Status:</strong> ${user.approved === false ? 'Pending' : 'Approved'}</p>
+            <p><strong>Admin:</strong> ${user.isHeadAdmin ? 'Yes' : 'No'}</p>
+            <p><strong>Created:</strong> ${user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A'}</p>
+          </div>
+          <h3 style="margin-top: 20px; margin-bottom: 10px;">Full Data (JSON)</h3>
+          <div class="json-viewer">${JSON.stringify(user, null, 2)}</div>
+        `;
+        
+        modal.classList.add('active');
+      });
+    }
+
+    // Organization actions
+    async function approveOrg(orgId) {
+      try {
+        await db.ref(`organizations/${orgId}/approved`).set(true);
+        showSuccess('Organization approved successfully');
+      } catch (error) {
+        showError('Failed to approve organization: ' + error.message);
+      }
+    }
+
+    async function deleteOrg(orgId) {
+      const confirmDiv = document.createElement('div');
+      confirmDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 10000;';
+      confirmDiv.innerHTML = `
+        <h3 style="margin-bottom: 15px;">🗑️ Delete Organization?</h3>
+        <p style="margin-bottom: 20px;">This will permanently delete the organization and ALL its data (members, events, files, etc.). This action cannot be undone.</p>
+        <button id="confirmDeleteOrg" class="btn-danger">Delete Organization</button>
+        <button id="cancelDeleteOrg" class="btn-secondary" style="margin-left: 10px;">Cancel</button>
+      `;
+      
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;';
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(confirmDiv);
+      
+      document.getElementById('confirmDeleteOrg').onclick = async () => {
+        try {
+          await db.ref(`organizations/${orgId}`).remove();
+          showSuccess('Organization deleted successfully');
+        } catch (error) {
+          showError('Failed to delete organization: ' + error.message);
+        } finally {
+          document.body.removeChild(confirmDiv);
+          document.body.removeChild(overlay);
+        }
+      };
+      
+      document.getElementById('cancelDeleteOrg').onclick = () => {
+        document.body.removeChild(confirmDiv);
+        document.body.removeChild(overlay);
+      };
+    }
+
+    function viewOrgDetails(orgId) {
+      db.ref(`organizations/${orgId}`).once('value', (snapshot) => {
+        const org = snapshot.val();
+        const modal = document.getElementById('detailsModal');
+        const title = document.getElementById('detailsModalTitle');
+        const content = document.getElementById('detailsModalContent');
+        
+        const memberCount = org.members ? Object.keys(org.members).length : 0;
+        const eventCount = org.events ? Object.keys(org.events).length : 0;
+        const fileCount = org.files ? Object.keys(org.files).length : 0;
+        
+        title.textContent = 'Organization Details';
+        content.innerHTML = `
+          <div style="background: #f5f7fa; padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+            <p><strong>Name:</strong> ${org.name}</p>
+            <p><strong>Type:</strong> ${org.type || 'N/A'}</p>
+            <p><strong>Description:</strong> ${org.description || 'N/A'}</p>
+            <p><strong>Status:</strong> ${org.approved === false ? 'Pending' : 'Approved'}</p>
+            <p><strong>Members:</strong> ${memberCount}</p>
+            <p><strong>Events:</strong> ${eventCount}</p>
+            <p><strong>Files:</strong> ${fileCount}</p>
+            <p><strong>Created By:</strong> ${org.createdBy || 'System'}</p>
+            <p><strong>Created:</strong> ${org.createdAt ? new Date(org.createdAt).toLocaleString() : 'N/A'}</p>
+          </div>
+          <h3 style="margin-top: 20px; margin-bottom: 10px;">Full Data (JSON)</h3>
+          <div class="json-viewer">${JSON.stringify(org, null, 2)}</div>
+        `;
+        
+        modal.classList.add('active');
+      });
+    }
+
+    // System actions
+    document.getElementById('backupDbBtn').addEventListener('click', async () => {
+      showSuccess('Creating backup...');
+      
+      try {
+        const [usersSnapshot, orgsSnapshot] = await Promise.all([
+          db.ref('users').once('value'),
+          db.ref('organizations').once('value')
+        ]);
+        
+        const backup = {
+          timestamp: Date.now(),
+          date: new Date().toISOString(),
+          users: usersSnapshot.val(),
+          organizations: orgsSnapshot.val()
+        };
+        
+        const json = JSON.stringify(backup, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cvsu_backup_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showSuccess('Backup created successfully');
+      } catch (error) {
+        showError('Backup failed: ' + error.message);
+      }
+    });
+
+    document.getElementById('generateReportBtn').addEventListener('click', async () => {
+      showSuccess('Generating report...');
+      
+      try {
+        const [usersSnapshot, orgsSnapshot] = await Promise.all([
+          db.ref('users').once('value'),
+          db.ref('organizations').once('value')
+        ]);
+        
+        const users = usersSnapshot.val() || {};
+        const orgs = orgsSnapshot.val() || {};
+        
+        let report = `CVSU Organization Portal - System Report\n`;
+        report += `Generated: ${new Date().toLocaleString()}\n\n`;
+        report += `=== OVERVIEW ===\n`;
+        report += `Total Users: ${Object.keys(users).length}\n`;
+        report += `Total Organizations: ${Object.keys(orgs).length}\n\n`;
+        
+        report += `=== USERS ===\n`;
+        Object.entries(users).forEach(([uid, user]) => {
+          report += `${user.name || user.email} (${user.email}) - ${user.approved === false ? 'Pending' : 'Approved'}\n`;
+        });
+        
+        report += `\n=== ORGANIZATIONS ===\n`;
+        Object.entries(orgs).forEach(([id, org]) => {
+          const memberCount = org.members ? Object.keys(org.members).length : 0;
+          report += `${org.name} - ${memberCount} members - ${org.approved === false ? 'Pending' : 'Approved'}\n`;
+        });
+        
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cvsu_report_${Date.now()}.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        showSuccess('Report generated successfully');
+      } catch (error) {
+        showError('Report generation failed: ' + error.message);
+      }
+    });
+
+    // Modal
+    document.getElementById('closeDetailsModal').addEventListener('click', () => {
+      document.getElementById('detailsModal').classList.remove('active');
+    });
+
+    document.getElementById('detailsModal').addEventListener('click', (e) => {
+      if (e.target.id === 'detailsModal') {
+        document.getElementById('detailsModal').classList.remove('active');
+      }
+    });
+
+    // Make functions global
+    window.approveUser = approveUser;
+    window.toggleAdmin = toggleAdmin;
+    window.deleteUser = deleteUser;
+    window.viewUserDetails = viewUserDetails;
+    window.approveOrg = approveOrg;
+    window.deleteOrg = deleteOrg;
+    window.viewOrgDetails = viewOrgDetails;
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a30eb5137c48823',t:'MTc2MzkwMzU1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
